@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Login from './components/Login';
 import Register from './components/Register';
-import { useAuth } from './contexts/AuthContext'; // Import the useAuth hook
-import { auth } from './firebase';
-import { signOut } from 'firebase/auth';
+import Appointments from './components/Appointments';
+import DoctorAppointments from './components/DoctorAppointments';
+import { useAuth } from './contexts/AuthContext';
+import { auth, db } from './firebase';
+import { doc, getDoc, signOut } from 'firebase/firestore';
+import landingImage from './assets/pexels-cottonbro-7578803.jpg'; // Your image is now imported here
 import './App.css';
 
-function Dashboard() {
+function DoctorDashboard() {
   const { currentUser } = useAuth();
-  
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -20,9 +22,39 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <h2>Dashboard</h2>
-      <p>Welcome, {currentUser.email}!</p>
-      <button onClick={handleLogout} className="logout-button">Logout</button>
+      <div className="user-info">
+        <h2>Doctor Dashboard</h2>
+        <p>Welcome, Dr. {currentUser.email}!</p>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+      <div className="content">
+        <DoctorAppointments />
+      </div>
+    </div>
+  );
+}
+
+function PatientDashboard({ openBookingModal }) {
+  const { currentUser } = useAuth();
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      alert('Logged out successfully!');
+    } catch (err) {
+      alert('Failed to log out.');
+    }
+  };
+
+  return (
+    <div className="dashboard-container">
+      <div className="user-info">
+        <h2>Patient Dashboard</h2>
+        <p>Welcome, {currentUser.email}!</p>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+      <div className="content">
+        <Appointments openBookingModal={openBookingModal} />
+      </div>
     </div>
   );
 }
@@ -30,13 +62,33 @@ function Dashboard() {
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const { currentUser } = useAuth(); // Use the hook here
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [userType, setUserType] = useState(null);
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    const fetchUserType = async () => {
+      if (currentUser) {
+        const docRef = doc(db, 'users', currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserType(docSnap.data().userType);
+        } else {
+          setUserType('patient');
+        }
+      } else {
+        setUserType(null);
+      }
+    };
+    fetchUserType();
+  }, [currentUser]);
 
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
-
   const openRegisterModal = () => setIsRegisterModalOpen(true);
   const closeRegisterModal = () => setIsRegisterModalOpen(false);
+  const openBookingModal = () => setIsBookingModalOpen(true);
+  const closeBookingModal = () => setIsBookingModalOpen(false);
 
   return (
     <div className="app-container">
@@ -49,16 +101,16 @@ function App() {
         )}
       </header>
       
-      {currentUser ? (
-        <Dashboard />
-      ) : (
+      {currentUser && userType === 'doctor' && <DoctorDashboard />}
+      {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} />}
+      {!currentUser && (
         <main className="app-main-content">
+          <img src={landingImage} alt="A friendly health image for eClinic" className="landing-image" />
           <h1>Welcome to eClinic</h1>
           <p>A digital solution for your health needs.</p>
         </main>
       )}
 
-      {/* Login Modal */}
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={closeLoginModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -67,11 +119,18 @@ function App() {
         </div>
       )}
 
-      {/* Register Modal */}
       {isRegisterModalOpen && (
         <div className="modal-overlay" onClick={closeRegisterModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <Register close={closeRegisterModal} />
+          </div>
+        </div>
+      )}
+
+      {isBookingModalOpen && (
+        <div className="modal-overlay" onClick={closeBookingModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <BookAppointment close={closeBookingModal} />
           </div>
         </div>
       )}

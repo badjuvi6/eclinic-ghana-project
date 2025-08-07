@@ -19,12 +19,14 @@
   font-size: 1rem;
 }
 
-.form-group input {
+.form-group input,
+.form-group select { /* Add the select element here */
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
+  box-sizing: border-box; /* To prevent overflow */
 }
 
 .auth-button {

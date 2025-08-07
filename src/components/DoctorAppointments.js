@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
-import './Appointments.css';
+import './Appointments.css'; // Reusing the same CSS file
 
-const Appointments = ({ openBookingModal }) => {
+const DoctorAppointments = () => {
   const { currentUser } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,9 +14,10 @@ const Appointments = ({ openBookingModal }) => {
       if (currentUser) {
         setLoading(true);
         try {
+          // This query is different. It finds appointments where the doctorId matches the logged-in user's ID.
           const q = query(
             collection(db, 'appointments'),
-            where('patientId', '==', currentUser.uid)
+            where('doctorId', '==', currentUser.uid)
           );
           const querySnapshot = await getDocs(q);
           const fetchedAppointments = querySnapshot.docs.map(doc => ({
@@ -25,31 +26,27 @@ const Appointments = ({ openBookingModal }) => {
           }));
           setAppointments(fetchedAppointments);
         } catch (error) {
-          console.error('Error fetching appointments:', error);
+          console.error('Error fetching doctor appointments:', error);
         } finally {
           setLoading(false);
         }
       }
     };
-
     fetchAppointments();
   }, [currentUser]);
 
   if (loading) {
-    return <div className="loading">Loading appointments...</div>;
+    return <div className="loading">Loading your appointments...</div>;
   }
 
   return (
     <div className="appointments-container">
-      <h2>Your Appointments</h2>
-      <button onClick={openBookingModal} className="book-appointment-button">
-        Book an Appointment
-      </button>
+      <h2>Your Upcoming Appointments</h2>
       {appointments.length > 0 ? (
         <ul className="appointments-list">
           {appointments.map(appointment => (
             <li key={appointment.id} className="appointment-item">
-              <p><strong>Doctor:</strong> {appointment.doctorName}</p>
+              <p><strong>Patient:</strong> {appointment.patientName}</p>
               <p><strong>Date:</strong> {appointment.date}</p>
               <p><strong>Time:</strong> {appointment.time}</p>
             </li>
@@ -62,4 +59,4 @@ const Appointments = ({ openBookingModal }) => {
   );
 };
 
-export default Appointments;
+export default DoctorAppointments;
