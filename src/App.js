@@ -5,8 +5,9 @@ import Appointments from './components/Appointments';
 import DoctorAppointments from './components/DoctorAppointments';
 import { useAuth } from './contexts/AuthContext';
 import { auth, db } from './firebase';
-import { doc, getDoc, signOut } from 'firebase/firestore';
-import landingImage from './assets/pexels-cottonbro-7578803.jpg'; // Your image is now imported here
+import { doc, getDoc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth'; // CORRECTED IMPORT: signOut is from firebase/auth
+import landingImage from './assets/pexels-cottonbro-7578803.jpg';
 import './App.css';
 
 function DoctorDashboard() {
@@ -60,7 +61,7 @@ function PatientDashboard({ openBookingModal }) {
 }
 
 function App() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModal] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [userType, setUserType] = useState(null);
@@ -83,8 +84,8 @@ function App() {
     fetchUserType();
   }, [currentUser]);
 
-  const openLoginModal = () => setIsLoginModalOpen(true);
-  const closeLoginModal = () => setIsLoginModalOpen(false);
+  const openLoginModal = () => setIsLoginModal(true);
+  const closeLoginModal = () => setIsLoginModal(false);
   const openRegisterModal = () => setIsRegisterModalOpen(true);
   const closeRegisterModal = () => setIsRegisterModalOpen(false);
   const openBookingModal = () => setIsBookingModalOpen(true);
