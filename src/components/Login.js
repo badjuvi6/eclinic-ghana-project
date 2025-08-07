@@ -6,7 +6,7 @@ import './Login.css';
 const Login = ({ close }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('patient'); // Default to patient
+  const [userType, setUserType] = useState('patient');
   const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
@@ -15,8 +15,7 @@ const Login = ({ close }) => {
       setError('');
       await signInWithEmailAndPassword(auth, email, password);
       alert('User logged in successfully!');
-      // Call the close function and pass the selected userType
-      close(userType);
+      close();
     } catch (err) {
       setError(err.message);
     }

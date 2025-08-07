@@ -8,7 +8,7 @@ import { auth, db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import landingImage from './assets/pexels-cottonbro-7578803.jpg';
-import BookAppointment from './components/BookAppointment'; // ADDED: This import was missing
+import BookAppointment from './components/BookAppointment';
 import './App.css';
 
 function DoctorDashboard() {
@@ -62,7 +62,7 @@ function PatientDashboard({ openBookingModal }) {
 }
 
 function App() {
-  const [isLoginModalOpen, setIsLoginModal] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [userType, setUserType] = useState(null);
@@ -76,6 +76,7 @@ function App() {
         if (docSnap.exists()) {
           setUserType(docSnap.data().userType);
         } else {
+          // Default to patient if not found in DB
           setUserType('patient');
         }
       } else {
@@ -85,8 +86,8 @@ function App() {
     fetchUserType();
   }, [currentUser]);
 
-  const openLoginModal = () => setIsLoginModal(true);
-  const closeLoginModal = () => setIsLoginModal(false);
+  const openLoginModal = () => setIsLoginModalOpen(true);
+  const closeLoginModal = () => setIsLoginModalOpen(false);
   const openRegisterModal = () => setIsRegisterModalOpen(true);
   const closeRegisterModal = () => setIsRegisterModalOpen(false);
   const openBookingModal = () => setIsBookingModalOpen(true);
@@ -107,7 +108,7 @@ function App() {
       {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} />}
       {!currentUser && (
         <main className="app-main-content">
-          <img src={landingImage} alt="A friendly health image for eClinic" className="landing-image" />
+          <img src={landingImage} alt="A patient and doctor discussing a prescription" className="landing-image" />
           <h1>Welcome to eClinic</h1>
           <p>A digital solution for your health needs.</p>
         </main>
