@@ -3,7 +3,7 @@ import { auth } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import './Register.css';
 
-const Register = () => {
+const Register = ({ close }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,6 +14,7 @@ const Register = () => {
       setError('');
       await createUserWithEmailAndPassword(auth, email, password);
       alert('User registered successfully!');
+      close(); // Close the modal on success
     } catch (err) {
       setError(err.message);
     }

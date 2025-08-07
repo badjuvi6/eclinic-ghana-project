@@ -3,7 +3,7 @@ import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import './Login.css';
 
-const Login = () => {
+const Login = ({ close }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,6 +14,7 @@ const Login = () => {
       setError('');
       await signInWithEmailAndPassword(auth, email, password);
       alert('User logged in successfully!');
+      close(); // Close the modal on success
     } catch (err) {
       setError(err.message);
     }
