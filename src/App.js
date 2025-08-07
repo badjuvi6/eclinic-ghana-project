@@ -9,9 +9,10 @@ import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import landingImage from './assets/pexels-cottonbro-7578803.jpg';
 import BookAppointment from './components/BookAppointment';
+import Chat from './components/Chat'; // Import the new Chat component
 import './App.css';
 
-function DoctorDashboard() {
+function DoctorDashboard({ openChat }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -28,6 +29,7 @@ function DoctorDashboard() {
         <h2>Doctor Dashboard</h2>
         <p>Welcome, Dr. {currentUser.email}!</p>
         <button onClick={handleLogout} className="logout-button">Logout</button>
+        <button onClick={openChat} className="chat-button">Open Chat</button>
       </div>
       <div className="content">
         <DoctorAppointments />
@@ -36,7 +38,7 @@ function DoctorDashboard() {
   );
 }
 
-function PatientDashboard({ openBookingModal }) {
+function PatientDashboard({ openBookingModal, openChat }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -53,6 +55,7 @@ function PatientDashboard({ openBookingModal }) {
         <h2>Patient Dashboard</h2>
         <p>Welcome, {currentUser.email}!</p>
         <button onClick={handleLogout} className="logout-button">Logout</button>
+        <button onClick={openChat} className="chat-button">Open Chat</button>
       </div>
       <div className="content">
         <Appointments openBookingModal={openBookingModal} />
@@ -65,6 +68,7 @@ function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false); // New state for chat
   const [userType, setUserType] = useState(null);
   const { currentUser } = useAuth();
 
@@ -76,7 +80,6 @@ function App() {
         if (docSnap.exists()) {
           setUserType(docSnap.data().userType);
         } else {
-          // Default to patient if not found in DB
           setUserType('patient');
         }
       } else {
@@ -92,6 +95,8 @@ function App() {
   const closeRegisterModal = () => setIsRegisterModalOpen(false);
   const openBookingModal = () => setIsBookingModalOpen(true);
   const closeBookingModal = () => setIsBookingModalOpen(false);
+  const openChat = () => setIsChatOpen(true); // New function
+  const closeChat = () => setIsChatOpen(false); // New function
 
   return (
     <div className="app-container">
@@ -104,8 +109,8 @@ function App() {
         )}
       </header>
       
-      {currentUser && userType === 'doctor' && <DoctorDashboard />}
-      {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} />}
+      {currentUser && userType === 'doctor' && <DoctorDashboard openChat={openChat} />}
+      {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} openChat={openChat} />}
       {!currentUser && (
         <main className="app-main-content">
           <img src={landingImage} alt="A patient and doctor discussing a prescription" className="landing-image" />
@@ -137,6 +142,12 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Render the chat component if open. Hardcoded chat ID for demonstration. */}
+      {isChatOpen && (
+        <Chat chatId="demo-chat-id" close={closeChat} />
+      )}
+
     </div>
   );
 }
