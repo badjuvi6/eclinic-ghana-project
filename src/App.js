@@ -6,8 +6,9 @@ import DoctorAppointments from './components/DoctorAppointments';
 import { useAuth } from './contexts/AuthContext';
 import { auth, db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { signOut } from 'firebase/auth'; // CORRECTED IMPORT: signOut is from firebase/auth
+import { signOut } from 'firebase/auth';
 import landingImage from './assets/pexels-cottonbro-7578803.jpg';
+import BookAppointment from './components/BookAppointment'; // ADDED: This import was missing
 import './App.css';
 
 function DoctorDashboard() {
