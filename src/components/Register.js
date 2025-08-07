@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { auth } from '../firebase'; // Import the auth service
+import { auth } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import './Register.css';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -12,19 +13,17 @@ const Register = () => {
     try {
       setError('');
       await createUserWithEmailAndPassword(auth, email, password);
-      console.log('User registered successfully!');
-      // You can add a redirect or success message here
+      alert('User registered successfully!');
     } catch (err) {
       setError(err.message);
-      console.error('Error registering user:', err);
     }
   };
 
   return (
-    <div>
+    <div className="form-container">
       <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <div>
+      <form onSubmit={handleRegister} className="auth-form">
+        <div className="form-group">
           <label>Email:</label>
           <input
             type="email"
@@ -33,7 +32,7 @@ const Register = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
@@ -42,9 +41,9 @@ const Register = () => {
             required
           />
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" className="auth-button">Register</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

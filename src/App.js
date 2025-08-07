@@ -1,67 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import './App.css';
+import React, { useState } from 'react';
 import Login from './components/Login';
 import Register from './components/Register';
-import Dashboard from './components/Dashboard';
-import DoctorDashboard from './components/DoctorDashboard'; // Import the new component
-import { auth } from './firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import './App.css';
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        // We'll hardcode an admin email for now for simplicity
-        // In a real app, this would be more secure
-        if (currentUser.email === 'doctor@example.com') {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      } else {
-        setIsAdmin(false);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const openLoginModal = () => setIsLoginModalOpen(true);
+  const closeLoginModal = () => setIsLoginModalOpen(false);
+  
+  const openRegisterModal = () => setIsRegisterModalOpen(true);
+  const closeRegisterModal = () => setIsRegisterModalOpen(false);
 
   return (
-    <Router>
-      <div className="App">
-        <header className="App-header">
-          <h1>eClinic Health App</h1>
-        </header>
-        <main>
-          <Routes>
-            <Route
-              path="/dashboard"
-              element={user ? (isAdmin ? <DoctorDashboard /> : <Dashboard user={user} />) : <Navigate to="/" />}
-            />
-            <Route
-              path="/"
-              element={user ? <Navigate to="/dashboard" /> : (
-                <div style={{ display: 'flex', justifyContent: 'space-around', margin: '20px' }}>
-                  <Login />
-                  <Register />
-                </div>
-              )}
-            />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <div className="app-container">
+      <header className="app-header">
+        <button onClick={openLoginModal} className="login-button">Login</button>
+        <button onClick={openRegisterModal} className="register-button">Register</button>
+      </header>
+
+      <main className="app-main-content">
+        <h1>Welcome to eClinic</h1>
+        <p>A digital solution for your health needs.</p>
+      </main>
+
+      {/* Login Modal */}
+      {isLoginModalOpen && (
+        <div className="modal-overlay" onClick={closeLoginModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <Login />
+          </div>
+        </div>
+      )}
+
+      {/* Register Modal */}
+      {isRegisterModalOpen && (
+        <div className="modal-overlay" onClick={closeRegisterModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <Register />
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
