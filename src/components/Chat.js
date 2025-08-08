@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, serverTimestamp, onSnapshot, where, getDocs } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import './Chat.css';
 
@@ -8,30 +8,38 @@ const Chat = ({ chatId, close }) => {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (!chatId) return;
 
-    const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt', 'asc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs = snapshot.docs.map(doc => ({
+    const messagesQuery = query(
+      collection(db, 'chats', chatId, 'messages'),
+      orderBy('createdAt')
+    );
+    
+    const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+      const messagesList = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
-      setMessages(msgs);
+      setMessages(messagesList);
     });
 
     return () => unsubscribe();
   }, [chatId]);
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (newMessage.trim() === '') return;
 
     await addDoc(collection(db, 'chats', chatId, 'messages'), {
       text: newMessage,
       senderId: currentUser.uid,
-      senderName: currentUser.email,
       createdAt: serverTimestamp(),
     });
 
@@ -39,26 +47,29 @@ const Chat = ({ chatId, close }) => {
   };
 
   return (
-    <div className="chat-window">
+    <div className="chat-container">
       <div className="chat-header">
         <h3>Chat</h3>
-        <button onClick={close} className="close-chat-button">&times;</button>
+        <button onClick={close} className="close-button">X</button>
       </div>
-      <div className="messages-container">
+      <div className="messages-list">
         {messages.map(msg => (
           <div key={msg.id} className={`message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}>
             <p>{msg.text}</p>
+            <span className="timestamp">{msg.createdAt?.toDate().toLocaleTimeString()}</span>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSendMessage} className="message-input-form">
+      <form onSubmit={handleSendMessage} className="message-form">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
+          className="message-input"
         />
-        <button type="submit">Send</button>
+        <button type="submit" className="send-button">Send</button>
       </form>
     </div>
   );

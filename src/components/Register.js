@@ -22,7 +22,7 @@ const Register = ({ close }) => {
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         email: email,
-        fullName: fullName, // Save the full name
+        fullName: fullName,
         userType: userType,
       });
 

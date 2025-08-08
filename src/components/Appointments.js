@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import './Appointments.css';
 
@@ -10,53 +10,40 @@ const Appointments = ({ openBookingModal }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
-      if (currentUser) {
-        setLoading(true);
-        try {
-          const q = query(
-            collection(db, 'appointments'),
-            where('patientId', '==', currentUser.uid)
-          );
-          const querySnapshot = await getDocs(q);
-          const fetchedAppointments = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setAppointments(fetchedAppointments);
-        } catch (error) {
-          console.error('Error fetching appointments:', error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchAppointments();
+    if (currentUser) {
+      const q = query(collection(db, 'appointments'), where('patientId', '==', currentUser.uid));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const appointmentsList = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setAppointments(appointmentsList);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    }
   }, [currentUser]);
 
   if (loading) {
-    return <div className="loading">Loading appointments...</div>;
+    return <div>Loading appointments...</div>;
   }
 
   return (
     <div className="appointments-container">
-      <h2>Your Appointments</h2>
-      <button onClick={openBookingModal} className="book-appointment-button">
-        Book an Appointment
-      </button>
-      {appointments.length > 0 ? (
-        <ul className="appointments-list">
-          {appointments.map(appointment => (
-            <li key={appointment.id} className="appointment-item">
-              <p><strong>Doctor:</strong> {appointment.doctorName}</p>
-              <p><strong>Date:</strong> {appointment.date}</p>
-              <p><strong>Time:</strong> {appointment.time}</p>
-            </li>
-          ))}
-        </ul>
+      <h3>Your Appointments</h3>
+      <button onClick={openBookingModal} className="book-appointment-button">Book a New Appointment</button>
+      {appointments.length === 0 ? (
+        <p>You have no appointments booked yet.</p>
       ) : (
-        <p>You have no appointments scheduled.</p>
+        <div className="appointments-list">
+          {appointments.map(appointment => (
+            <div key={appointment.id} className="appointment-card">
+              <p><strong>Doctor:</strong> {appointment.doctorEmail}</p>
+              <p><strong>Date:</strong> {appointment.appointmentDate}</p>
+              <p><strong>Time:</strong> {appointment.appointmentTime}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

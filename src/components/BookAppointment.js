@@ -4,11 +4,17 @@ import { collection, getDocs, doc, setDoc, query, where } from 'firebase/firesto
 import { useAuth } from '../contexts/AuthContext';
 import './BookAppointment.css';
 
+const timeSlots = [
+  '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+  '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
+];
+
 const BookAppointment = ({ close }) => {
   const { currentUser } = useAuth();
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [appointmentDate, setAppointmentDate] = useState('');
+  const [appointmentTime, setAppointmentTime] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,8 +35,8 @@ const BookAppointment = ({ close }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedDoctor || !appointmentDate) {
-      alert('Please select a doctor and date.');
+    if (!selectedDoctor || !appointmentDate || !appointmentTime) {
+      alert('Please select a doctor, date, and time.');
       return;
     }
 
@@ -41,6 +47,7 @@ const BookAppointment = ({ close }) => {
         patientEmail: currentUser.email,
         doctorId: selectedDoctor,
         appointmentDate: appointmentDate,
+        appointmentTime: appointmentTime,
         createdAt: new Date(),
       });
       alert('Appointment booked successfully!');
@@ -65,7 +72,7 @@ const BookAppointment = ({ close }) => {
             <option value="">--Select a doctor--</option>
             {doctors.map(doctor => (
               <option key={doctor.id} value={doctor.id}>
-                {doctor.fullName || doctor.email} {/* Now displays full name or email */}
+                {doctor.fullName || doctor.email}
               </option>
             ))}
           </select>
@@ -78,6 +85,17 @@ const BookAppointment = ({ close }) => {
             onChange={(e) => setAppointmentDate(e.target.value)}
             required
           />
+        </div>
+        <div className="form-group">
+          <label>Appointment Time:</label>
+          <select value={appointmentTime} onChange={(e) => setAppointmentTime(e.target.value)} required>
+            <option value="">--Select a time--</option>
+            {timeSlots.map(time => (
+              <option key={time} value={time}>
+                {time}
+              </option>
+            ))}
+          </select>
         </div>
         <button type="submit" className="book-button">Book Appointment</button>
       </form>

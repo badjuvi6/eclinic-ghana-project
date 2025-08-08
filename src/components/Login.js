@@ -6,7 +6,6 @@ import './Login.css';
 const Login = ({ close }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('patient');
   const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
@@ -14,7 +13,6 @@ const Login = ({ close }) => {
     try {
       setError('');
       await signInWithEmailAndPassword(auth, email, password);
-      alert('User logged in successfully!');
       close();
     } catch (err) {
       setError(err.message);
@@ -42,13 +40,6 @@ const Login = ({ close }) => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <div className="form-group">
-          <label>Login As:</label>
-          <select value={userType} onChange={(e) => setUserType(e.target.value)}>
-            <option value="patient">Patient</option>
-            <option value="doctor">Doctor</option>
-          </select>
         </div>
         <button type="submit" className="auth-button">Login</button>
       </form>

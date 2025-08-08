@@ -1,29 +1,34 @@
 import React from 'react';
+import Appointments from './Appointments';
+import { useAuth } from '../contexts/AuthContext';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import Appointments from './Appointments'; // Import the new component
+import './Dashboard.css';
 
-const Dashboard = ({ user }) => {
+function PatientDashboard({ openBookingModal, openChatList, fullName }) {
+  const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log('User signed out successfully!');
-    } catch (error) {
-      console.error('Error signing out:', error);
+      alert('Logged out successfully!');
+    } catch (err) {
+      alert('Failed to log out.');
     }
   };
 
   return (
-    <div>
-      <h2>User Dashboard</h2>
-      <p>Welcome, {user.email}!</p>
-      <button onClick={handleLogout}>Logout</button>
-      
-      <hr />
-      
-      <Appointments />
+    <div className="dashboard-container">
+      <div className="user-info">
+        <h2>Patient Dashboard</h2>
+        <p>Welcome, {fullName || currentUser.email}!</p>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+        <button onClick={openChatList} className="chat-button">Open Chat</button>
+      </div>
+      <div className="content">
+        <Appointments openBookingModal={openBookingModal} />
+      </div>
     </div>
   );
-};
+}
 
-export default Dashboard;
+export default PatientDashboard;

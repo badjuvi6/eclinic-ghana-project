@@ -1,58 +1,36 @@
-.book-appointment-container {
+.form-container {
   padding: 20px;
-  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.book-appointment-container h2 {
-  margin-bottom: 20px;
-}
-
-.book-appointment-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.book-appointment-container .form-group {
+.booking-form .form-group {
+  margin-bottom: 15px;
   text-align: left;
 }
 
-.book-appointment-container label {
+.booking-form .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-size: 1rem;
+  font-weight: bold;
 }
 
-.book-appointment-container input,
-.book-appointment-container select {
+.booking-form .form-group select,
+.booking-form .form-group input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 1rem;
+  box-sizing: border-box;
 }
 
-.book-appointment-container button {
+.book-button {
+  width: 100%;
+  padding: 12px;
   background-color: #28a745;
   color: white;
-  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1rem;
-  transition: background-color 0.3s ease;
-}
-
-.book-appointment-container button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-.book-appointment-container button:hover:not(:disabled) {
-  background-color: #218838;
-}
-
-.book-appointment-container .error-message {
-  color: red;
-  margin-top: 15px;
 }

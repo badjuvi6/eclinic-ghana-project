@@ -1,8 +1,5 @@
-.chat-window {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 350px;
+.chat-container {
+  width: 300px;
   height: 500px;
   background-color: white;
   border: 1px solid #ccc;
@@ -10,7 +7,10 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  z-index: 1000;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1001;
 }
 
 .chat-header {
@@ -18,33 +18,39 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-bottom: 1px solid #eee;
 }
 
-.close-chat-button {
+.chat-header h3 {
+  margin: 0;
+}
+
+.chat-header .close-button {
   background: none;
   border: none;
-  color: white;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
 }
 
-.messages-container {
+.messages-list {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .message {
   padding: 8px 12px;
   border-radius: 15px;
-  margin-bottom: 10px;
-  max-width: 75%;
+  max-width: 80%;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.message p {
+  margin: 0;
 }
 
 .message.sent {
@@ -55,29 +61,41 @@
 
 .message.received {
   background-color: #e9e9eb;
-  color: #333;
+  color: black;
   align-self: flex-start;
 }
 
-.message-input-form {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid #ccc;
+.timestamp {
+  font-size: 0.7em;
+  color: #888;
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
 }
 
-.message-input-form input {
-  flex: 1;
+.message.sent .timestamp {
+  color: #cce5ff;
+}
+
+.message-form {
+  display: flex;
   padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.message-input {
+  flex: 1;
   border: 1px solid #ccc;
   border-radius: 20px;
+  padding: 10px;
   margin-right: 10px;
 }
 
-.message-input-form button {
-  background-color: #007bff;
+.send-button {
+  background-color: #28a745;
   color: white;
   border: none;
-  padding: 10px 15px;
   border-radius: 20px;
+  padding: 10px 15px;
   cursor: pointer;
 }
