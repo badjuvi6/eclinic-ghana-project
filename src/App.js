@@ -8,10 +8,11 @@ import { auth, db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import BookAppointment from './components/BookAppointment';
-import Chat from './components/Chat'; 
+import Chat from './components/Chat';
+import ChatList from './components/ChatList'; // Import the new ChatList component
 import './App.css';
 
-function DoctorDashboard({ openChat }) {
+function DoctorDashboard({ openBookingModal, openChat, selectedChatId, onSelectChat, openChatList }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -28,7 +29,7 @@ function DoctorDashboard({ openChat }) {
         <h2>Doctor Dashboard</h2>
         <p>Welcome, Dr. {currentUser.email}!</p>
         <button onClick={handleLogout} className="logout-button">Logout</button>
-        <button onClick={openChat} className="chat-button">Open Chat</button>
+        <button onClick={openChatList} className="chat-button">Open Chat</button>
       </div>
       <div className="content">
         <DoctorAppointments />
@@ -37,7 +38,7 @@ function DoctorDashboard({ openChat }) {
   );
 }
 
-function PatientDashboard({ openBookingModal, openChat }) {
+function PatientDashboard({ openBookingModal, openChat, selectedChatId, onSelectChat, openChatList }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -54,7 +55,7 @@ function PatientDashboard({ openBookingModal, openChat }) {
         <h2>Patient Dashboard</h2>
         <p>Welcome, {currentUser.email}!</p>
         <button onClick={handleLogout} className="logout-button">Logout</button>
-        <button onClick={openChat} className="chat-button">Open Chat</button>
+        <button onClick={openChatList} className="chat-button">Open Chat</button>
       </div>
       <div className="content">
         <Appointments openBookingModal={openBookingModal} />
@@ -67,7 +68,8 @@ function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isChatListOpen, setIsChatListOpen] = useState(false);
+  const [selectedChatId, setSelectedChatId] = useState(null);
   const [userType, setUserType] = useState(null);
   const { currentUser } = useAuth();
 
@@ -94,8 +96,17 @@ function App() {
   const closeRegisterModal = () => setIsRegisterModalOpen(false);
   const openBookingModal = () => setIsBookingModalOpen(true);
   const closeBookingModal = () => setIsBookingModalOpen(false);
-  const openChat = () => setIsChatOpen(true);
-  const closeChat = () => setIsChatOpen(false);
+  const openChatList = () => {
+    setIsChatListOpen(true);
+    setSelectedChatId(null);
+  };
+  const closeChatList = () => {
+    setIsChatListOpen(false);
+    setSelectedChatId(null);
+  };
+  const onSelectChat = (chatId) => {
+    setSelectedChatId(chatId);
+  };
 
   return (
     <div className="app-container">
@@ -108,8 +119,8 @@ function App() {
         )}
       </header>
       
-      {currentUser && userType === 'doctor' && <DoctorDashboard openChat={openChat} />}
-      {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} openChat={openChat} />}
+      {currentUser && userType === 'doctor' && <DoctorDashboard openBookingModal={openBookingModal} openChatList={openChatList} />}
+      {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} />}
       {!currentUser && (
         <main className="app-main-content">
           <h1>Welcome to eClinic</h1>
@@ -141,8 +152,12 @@ function App() {
         </div>
       )}
 
-      {isChatOpen && (
-        <Chat chatId="demo-chat-id" close={closeChat} />
+      {isChatListOpen && !selectedChatId && (
+        <ChatList onSelectChat={onSelectChat} />
+      )}
+
+      {selectedChatId && (
+        <Chat chatId={selectedChatId} close={closeChatList} />
       )}
 
     </div>

@@ -1,0 +1,52 @@
+.chatlist-container {
+  width: 300px;
+  height: 500px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.chatlist-container h3 {
+  margin-top: 0;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.chat-users-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-user-item:hover {
+  background-color: #f7f7f7;
+}
+
+.chat-user-item .user-email {
+  margin: 0;
+  font-weight: bold;
+}
+
+.chat-user-item .user-type {
+  margin: 0;
+  font-size: 0.8em;
+  color: #888;
+}
