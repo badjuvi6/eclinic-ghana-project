@@ -5,14 +5,15 @@ import Appointments from './components/Appointments';
 import DoctorAppointments from './components/DoctorAppointments';
 import { useAuth } from './contexts/AuthContext';
 import { auth, db } from './firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, query, where, collection, getDocs } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
-import ChatList from './components/ChatList'; // Import the new ChatList component
+import ChatList from './components/ChatList';
+import DoctorSchedule from './components/DoctorSchedule'; // Import the new component
 import './App.css';
 
-function DoctorDashboard({ openBookingModal, openChat, selectedChatId, onSelectChat, openChatList }) {
+function DoctorDashboard({ openChatList }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -32,13 +33,14 @@ function DoctorDashboard({ openBookingModal, openChat, selectedChatId, onSelectC
         <button onClick={openChatList} className="chat-button">Open Chat</button>
       </div>
       <div className="content">
+        <DoctorSchedule />
         <DoctorAppointments />
       </div>
     </div>
   );
 }
 
-function PatientDashboard({ openBookingModal, openChat, selectedChatId, onSelectChat, openChatList }) {
+function PatientDashboard({ openBookingModal, openChatList }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -119,7 +121,7 @@ function App() {
         )}
       </header>
       
-      {currentUser && userType === 'doctor' && <DoctorDashboard openBookingModal={openBookingModal} openChatList={openChatList} />}
+      {currentUser && userType === 'doctor' && <DoctorDashboard openChatList={openChatList} />}
       {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} />}
       {!currentUser && (
         <main className="app-main-content">
