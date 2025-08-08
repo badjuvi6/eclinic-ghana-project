@@ -8,9 +8,10 @@ import { auth, db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import BookAppointment from './components/BookAppointment';
+import Chat from './components/Chat'; 
 import './App.css';
 
-function DoctorDashboard() {
+function DoctorDashboard({ openChat }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -27,6 +28,7 @@ function DoctorDashboard() {
         <h2>Doctor Dashboard</h2>
         <p>Welcome, Dr. {currentUser.email}!</p>
         <button onClick={handleLogout} className="logout-button">Logout</button>
+        <button onClick={openChat} className="chat-button">Open Chat</button>
       </div>
       <div className="content">
         <DoctorAppointments />
@@ -35,7 +37,7 @@ function DoctorDashboard() {
   );
 }
 
-function PatientDashboard({ openBookingModal }) {
+function PatientDashboard({ openBookingModal, openChat }) {
   const { currentUser } = useAuth();
   const handleLogout = async () => {
     try {
@@ -52,6 +54,7 @@ function PatientDashboard({ openBookingModal }) {
         <h2>Patient Dashboard</h2>
         <p>Welcome, {currentUser.email}!</p>
         <button onClick={handleLogout} className="logout-button">Logout</button>
+        <button onClick={openChat} className="chat-button">Open Chat</button>
       </div>
       <div className="content">
         <Appointments openBookingModal={openBookingModal} />
@@ -109,7 +112,6 @@ function App() {
       {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} openChat={openChat} />}
       {!currentUser && (
         <main className="app-main-content">
-          {/* The image is now a background, so no <img> tag is needed here */}
           <h1>Welcome to eClinic</h1>
           <p>A digital solution for your health needs.</p>
         </main>
