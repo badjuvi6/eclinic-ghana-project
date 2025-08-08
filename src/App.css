@@ -32,7 +32,12 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding-top: 100px;
+  height: 100vh; /* This makes the section fill the entire screen */
+  color: white; /* Changed text color for better contrast */
+  background-image: url('./assets/pexels-cottonbro-7578803.jpg'); /* Your image as the background */
+  background-size: cover; /* This makes the image fill the container */
+  background-position: center; /* This centers the image */
+  background-repeat: no-repeat;
 }
 
 /* Modal Styling */
@@ -90,12 +95,11 @@
   cursor: pointer;
 }
 
-/* Landing Page Image Styling */
-.landing-image {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.chat-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
 }
