@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, query, where } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import './BookAppointment.css';
 
@@ -65,7 +65,7 @@ const BookAppointment = ({ close }) => {
             <option value="">--Select a doctor--</option>
             {doctors.map(doctor => (
               <option key={doctor.id} value={doctor.id}>
-                {doctor.email}
+                {doctor.fullName || doctor.email} {/* Now displays full name or email */}
               </option>
             ))}
           </select>
