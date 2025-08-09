@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, doc, setDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, addDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
+import SuccessModal from './SuccessModal';
 import './BookAppointment.css';
-
-const timeSlots = [
-  '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-  '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
-];
 
 const BookAppointment = ({ close }) => {
   const { currentUser } = useAuth();
@@ -15,90 +11,83 @@ const BookAppointment = ({ close }) => {
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const fetchDoctors = async () => {
-      const doctorsRef = collection(db, 'users');
-      const q = query(doctorsRef, where('userType', '==', 'doctor'));
+      const q = query(collection(db, 'users'), where('userType', '==', 'doctor'));
       const querySnapshot = await getDocs(q);
       const doctorsList = querySnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        fullName: doc.data().fullName,
+        email: doc.data().email
       }));
       setDoctors(doctorsList);
-      setLoading(false);
     };
-
     fetchDoctors();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleBook = async (e) => {
     e.preventDefault();
+    setError('');
+
     if (!selectedDoctor || !appointmentDate || !appointmentTime) {
-      alert('Please select a doctor, date, and time.');
+      setError('Please fill in all fields.');
       return;
     }
 
     try {
-      const appointmentRef = doc(collection(db, 'appointments'));
-      await setDoc(appointmentRef, {
+      await addDoc(collection(db, 'appointments'), {
         patientId: currentUser.uid,
-        patientEmail: currentUser.email,
         doctorId: selectedDoctor,
         appointmentDate: appointmentDate,
         appointmentTime: appointmentTime,
-        createdAt: new Date(),
+        status: 'pending',
+        createdAt: new Date()
       });
-      alert('Appointment booked successfully!');
-      close();
+      setShowSuccessModal(true);
     } catch (err) {
-      console.error("Error booking appointment: ", err);
-      alert('Failed to book appointment.');
+      setError('Failed to book appointment.');
+      console.error(err);
     }
   };
 
-  if (loading) {
-    return <div>Loading doctors...</div>;
-  }
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    close();
+  };
 
   return (
     <div className="form-container">
       <h2>Book Appointment</h2>
-      <form onSubmit={handleSubmit} className="booking-form">
+      <form onSubmit={handleBook} className="booking-form">
         <div className="form-group">
-          <label>Select Doctor:</label>
+          <label>Doctor</label>
           <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)} required>
-            <option value="">--Select a doctor--</option>
+            <option value="">Select a Doctor</option>
             {doctors.map(doctor => (
-              <option key={doctor.id} value={doctor.id}>
-                {doctor.fullName || doctor.email}
-              </option>
+              <option key={doctor.id} value={doctor.id}>{doctor.fullName}</option>
             ))}
           </select>
         </div>
         <div className="form-group">
-          <label>Appointment Date:</label>
-          <input
-            type="date"
-            value={appointmentDate}
-            onChange={(e) => setAppointmentDate(e.target.value)}
-            required
-          />
+          <label>Date</label>
+          <input type="date" value={appointmentDate} onChange={(e) => setAppointmentDate(e.target.value)} required />
         </div>
         <div className="form-group">
-          <label>Appointment Time:</label>
-          <select value={appointmentTime} onChange={(e) => setAppointmentTime(e.target.value)} required>
-            <option value="">--Select a time--</option>
-            {timeSlots.map(time => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
+          <label>Time</label>
+          <input type="time" value={appointmentTime} onChange={(e) => setAppointmentTime(e.target.value)} required />
         </div>
-        <button type="submit" className="book-button">Book Appointment</button>
+        {error && <p className="error-message">{error}</p>}
+        <button type="submit" className="book-button">Book</button>
       </form>
+      {showSuccessModal && (
+        <SuccessModal 
+          message="Appointment booked successfully!" 
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 };

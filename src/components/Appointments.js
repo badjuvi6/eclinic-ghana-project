@@ -3,6 +3,7 @@ import { db } from '../firebase';
 import { collection, query, where, onSnapshot, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import ConfirmationModal from './ConfirmationModal';
+import SuccessModal from './SuccessModal';
 import './Appointments.css';
 
 const Appointments = ({ openBookingModal }) => {
@@ -10,6 +11,7 @@ const Appointments = ({ openBookingModal }) => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
   useEffect(() => {
@@ -18,7 +20,6 @@ const Appointments = ({ openBookingModal }) => {
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         const appointmentsList = await Promise.all(snapshot.docs.map(async (appointmentDoc) => {
           const appointment = { id: appointmentDoc.id, ...appointmentDoc.data() };
-          // Fetch the doctor's full name from the 'users' collection
           const doctorRef = doc(db, 'users', appointment.doctorId);
           const doctorSnap = await getDoc(doctorRef);
           if (doctorSnap.exists()) {
@@ -44,7 +45,7 @@ const Appointments = ({ openBookingModal }) => {
     try {
       if (appointmentToDelete) {
         await deleteDoc(doc(db, "appointments", appointmentToDelete));
-        alert('Appointment cancelled successfully.');
+        setShowSuccessModal(true);
       }
     } catch (err) {
       console.error("Error removing appointment: ", err);
@@ -53,6 +54,10 @@ const Appointments = ({ openBookingModal }) => {
       setShowConfirmModal(false);
       setAppointmentToDelete(null);
     }
+  };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
   };
 
   if (loading) {
@@ -87,6 +92,12 @@ const Appointments = ({ openBookingModal }) => {
           message="Are you sure you want to cancel this appointment?"
           onConfirm={handleDelete}
           onCancel={() => setShowConfirmModal(false)}
+        />
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          message="Appointment cancelled successfully!"
+          onClose={handleSuccessModalClose}
         />
       )}
     </div>

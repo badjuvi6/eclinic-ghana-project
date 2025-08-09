@@ -13,9 +13,9 @@ const DoctorAppointments = () => {
     if (currentUser) {
       const q = query(collection(db, 'appointments'), where('doctorId', '==', currentUser.uid));
       const unsubscribe = onSnapshot(q, async (snapshot) => {
-        const appointmentsList = await Promise.all(snapshot.docs.map(async (appointmentDoc) => {
-          const appointment = { id: appointmentDoc.id, ...appointmentDoc.data() };
-          // Fetch the patient's full name from the 'users' collection
+        const appointmentDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        const appointmentsWithPatients = await Promise.all(appointmentDocs.map(async (appointment) => {
           if (appointment.patientId) {
             const patientRef = doc(db, 'users', appointment.patientId);
             const patientSnap = await getDoc(patientRef);
@@ -29,7 +29,8 @@ const DoctorAppointments = () => {
           }
           return appointment;
         }));
-        setAppointments(appointmentsList);
+        
+        setAppointments(appointmentsWithPatients);
         setLoading(false);
       });
       return () => unsubscribe();
