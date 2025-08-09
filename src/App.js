@@ -3,8 +3,9 @@ import Login from './components/Login';
 import Register from './components/Register';
 import PatientDashboard from './components/dashboard';
 import DoctorDashboard from './components/doctordashboard';
+import HomePage from './components/HomePage'; // Import the new HomePage
 import { useAuth } from './contexts/AuthContext';
-import { db } from './firebase';
+import { auth, db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
@@ -74,12 +75,7 @@ function App() {
       
       {currentUser && userType === 'doctor' && <DoctorDashboard openChatList={openChatList} fullName={fullName} />}
       {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} fullName={fullName} />}
-      {!currentUser && (
-        <main className="app-main-content">
-          <h1>Welcome to eClinic</h1>
-          <p>A digital solution for your health needs.</p>
-        </main>
-      )}
+      {!currentUser && <HomePage />} {/* This is the new homepage */}
 
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={closeLoginModal}>
