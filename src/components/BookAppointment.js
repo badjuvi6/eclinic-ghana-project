@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, query, where, addDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, addDoc, doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import Modal from './Modal';
+import DoctorProfileModal from './DoctorProfileModal'; // Import the new modal
 import './BookAppointment.css';
 
 const BookAppointment = ({ close }) => {
@@ -13,6 +14,8 @@ const BookAppointment = ({ close }) => {
   const [appointmentTime, setAppointmentTime] = useState('');
   const [error, setError] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showDoctorProfile, setShowDoctorProfile] = useState(false);
+  const [selectedDoctorProfile, setSelectedDoctorProfile] = useState(null);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -21,7 +24,9 @@ const BookAppointment = ({ close }) => {
       const doctorsList = querySnapshot.docs.map(doc => ({
         id: doc.id,
         fullName: doc.data().fullName,
-        email: doc.data().email
+        email: doc.data().email,
+        specialty: doc.data().specialty, // Fetch specialty
+        bio: doc.data().bio // Fetch bio
       }));
       setDoctors(doctorsList);
     };
@@ -33,7 +38,7 @@ const BookAppointment = ({ close }) => {
     setError('');
 
     if (!selectedDoctor || !appointmentDate || !appointmentTime) {
-      setError('Please fill in all fields.');
+      setError('Please select a doctor, date, and time.');
       return;
     }
 
@@ -58,34 +63,77 @@ const BookAppointment = ({ close }) => {
     close();
   };
 
+  const viewDoctorProfile = (doctor) => {
+    setSelectedDoctorProfile(doctor);
+    setShowDoctorProfile(true);
+  };
+
+  const selectDoctorAndCloseProfile = (doctor) => {
+    setSelectedDoctor(doctor.id);
+    setSelectedDoctorProfile(null);
+    setShowDoctorProfile(false);
+  };
+
+  const handleCloseDoctorProfile = () => {
+    setShowDoctorProfile(false);
+    setSelectedDoctorProfile(null);
+  };
+
   return (
     <div className="form-container">
       <h2>Book Appointment</h2>
-      <form onSubmit={handleBook} className="booking-form">
-        <div className="form-group">
-          <label>Doctor</label>
-          <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)} required>
-            <option value="">Select a Doctor</option>
-            {doctors.map(doctor => (
-              <option key={doctor.id} value={doctor.id}>{doctor.fullName}</option>
-            ))}
-          </select>
+      {error && <p className="error-message">{error}</p>}
+      
+      {!selectedDoctor && (
+        <div className="doctor-list">
+          <h3>Available Doctors</h3>
+          {doctors.map(doctor => (
+            <div key={doctor.id} className="doctor-item">
+              <div className="doctor-info">
+                <h4>Dr. {doctor.fullName}</h4>
+                <p>{doctor.specialty || 'General Practitioner'}</p>
+              </div>
+              <button 
+                onClick={() => viewDoctorProfile(doctor)}
+                className="view-profile-button"
+              >
+                View Profile
+              </button>
+            </div>
+          ))}
         </div>
-        <div className="form-group">
-          <label>Date</label>
-          <input type="date" value={appointmentDate} onChange={(e) => setAppointmentDate(e.target.value)} required />
-        </div>
-        <div className="form-group">
-          <label>Time</label>
-          <input type="time" value={appointmentTime} onChange={(e) => setAppointmentTime(e.target.value)} required />
-        </div>
-        {error && <p className="error-message">{error}</p>}
-        <button type="submit" className="book-button">Book</button>
-      </form>
+      )}
+
+      {selectedDoctor && (
+        <form onSubmit={handleBook} className="booking-form">
+          <div className="form-group">
+            <label>You have selected: <strong>Dr. {doctors.find(d => d.id === selectedDoctor)?.fullName}</strong></label>
+          </div>
+          <div className="form-group">
+            <label>Date</label>
+            <input type="date" value={appointmentDate} onChange={(e) => setAppointmentDate(e.target.value)} required />
+          </div>
+          <div className="form-group">
+            <label>Time</label>
+            <input type="time" value={appointmentTime} onChange={(e) => setAppointmentTime(e.target.value)} required />
+          </div>
+          <button type="submit" className="book-button">Confirm Booking</button>
+          <button type="button" onClick={() => setSelectedDoctor('')} className="back-button">Back to Doctors</button>
+        </form>
+      )}
+
       {showSuccessModal && (
         <Modal 
           message="Appointment booked successfully!" 
           onConfirm={handleModalClose}
+        />
+      )}
+
+      {showDoctorProfile && (
+        <DoctorProfileModal
+          doctor={selectedDoctorProfile}
+          onBook={selectDoctorAndCloseProfile}
+          onClose={handleCloseDoctorProfile}
         />
       )}
     </div>
