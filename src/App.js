@@ -9,6 +9,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
 import ChatList from './components/ChatList';
+import { signOut } from 'firebase/auth';
 import './App.css';
 
 function App() {
@@ -41,6 +42,15 @@ function App() {
     fetchUserTypeAndName();
   }, [currentUser]);
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      alert('Logged out successfully!');
+    } catch (err) {
+      alert('Failed to log out.');
+    }
+  };
+
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
   const openRegisterModal = () => setIsRegisterModalOpen(true);
@@ -70,6 +80,9 @@ function App() {
             <button onClick={openRegisterModal} className="register-button">Register</button>
           </>
         )}
+        {currentUser && (
+          <button onClick={handleLogout} className="logout-button">Logout</button>
+        )}
       </header>
       
       {currentUser && userType === 'doctor' && <DoctorDashboard openChatList={openChatList} fullName={fullName} />}
@@ -92,7 +105,7 @@ function App() {
       {isRegisterModalOpen && (
         <div className="modal-overlay" onClick={closeRegisterModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <Register close={closeRegisterModal} />
+            <Register close={() => { closeRegisterModal(); alert('Registration successful! Please log in.'); }} />
           </div>
         </div>
       )}
@@ -106,11 +119,11 @@ function App() {
       )}
 
       {isChatListOpen && !selectedChatId && (
-        <ChatList onSelectChat={onSelectChat} />
+        <ChatList onSelectChat={onSelectChat} close={closeChatList} />
       )}
 
       {selectedChatId && (
-        <Chat chatId={selectedChatId} close={closeChatList} />
+        <Chat chatId={selectedChatId} close={() => { setSelectedChatId(null); setIsChatListOpen(false); }} />
       )}
     </div>
   );

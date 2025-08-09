@@ -14,7 +14,6 @@ const Login = ({ close }) => {
       await signInWithEmailAndPassword(auth, email, password);
       close();
     } catch (err) {
-      // This is where we handle the specific error
       if (err.code === 'auth/invalid-credential') {
         setError('Invalid email or password. Please try again.');
       } else {
