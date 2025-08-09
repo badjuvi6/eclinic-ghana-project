@@ -11,11 +11,15 @@ const Login = ({ close }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      setError('');
       await signInWithEmailAndPassword(auth, email, password);
       close();
     } catch (err) {
-      setError(err.message);
+      // This is where we handle the specific error
+      if (err.code === 'auth/invalid-credential') {
+        setError('Invalid email or password. Please try again.');
+      } else {
+        setError(err.message);
+      }
     }
   };
 
@@ -24,7 +28,7 @@ const Login = ({ close }) => {
       <h2>Login</h2>
       <form onSubmit={handleLogin} className="auth-form">
         <div className="form-group">
-          <label>Email:</label>
+          <label>Email Address</label>
           <input
             type="email"
             value={email}
@@ -33,7 +37,7 @@ const Login = ({ close }) => {
           />
         </div>
         <div className="form-group">
-          <label>Password:</label>
+          <label>Password</label>
           <input
             type="password"
             value={password}
@@ -41,9 +45,9 @@ const Login = ({ close }) => {
             required
           />
         </div>
+        {error && <p className="error-message">{error}</p>}
         <button type="submit" className="auth-button">Login</button>
       </form>
-      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
