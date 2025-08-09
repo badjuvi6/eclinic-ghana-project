@@ -4,12 +4,11 @@ import Register from './components/Register';
 import PatientDashboard from './components/dashboard';
 import DoctorDashboard from './components/doctordashboard';
 import { useAuth } from './contexts/AuthContext';
-import { auth, db } from './firebase';
+import { db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
 import ChatList from './components/ChatList';
-import { signOut } from 'firebase/auth';
 import './App.css';
 
 function App() {
@@ -42,15 +41,6 @@ function App() {
     fetchUserTypeAndName();
   }, [currentUser]);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      alert('Logged out successfully!');
-    } catch (err) {
-      alert('Failed to log out.');
-    }
-  };
-
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
   const openRegisterModal = () => setIsRegisterModalOpen(true);
@@ -79,9 +69,6 @@ function App() {
             <button onClick={openLoginModal} className="login-button">Login</button>
             <button onClick={openRegisterModal} className="register-button">Register</button>
           </>
-        )}
-        {currentUser && (
-          <button onClick={handleLogout} className="logout-button">Logout</button>
         )}
       </header>
       
