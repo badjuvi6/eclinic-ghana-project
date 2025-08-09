@@ -16,12 +16,16 @@ const DoctorAppointments = () => {
         const appointmentsList = await Promise.all(snapshot.docs.map(async (appointmentDoc) => {
           const appointment = { id: appointmentDoc.id, ...appointmentDoc.data() };
           // Fetch the patient's full name from the 'users' collection
-          const patientRef = doc(db, 'users', appointment.patientId);
-          const patientSnap = await getDoc(patientRef);
-          if (patientSnap.exists()) {
-            appointment.patientName = patientSnap.data().fullName || 'Unknown Patient';
+          if (appointment.patientId) {
+            const patientRef = doc(db, 'users', appointment.patientId);
+            const patientSnap = await getDoc(patientRef);
+            if (patientSnap.exists() && patientSnap.data().fullName) {
+              appointment.patientName = patientSnap.data().fullName;
+            } else {
+              appointment.patientName = 'Unknown Patient';
+            }
           } else {
-            appointment.patientName = 'Unknown Patient';
+             appointment.patientName = 'Unknown Patient';
           }
           return appointment;
         }));

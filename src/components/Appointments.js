@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
+import ConfirmationModal from './ConfirmationModal';
 import './Appointments.css';
 
 const Appointments = ({ openBookingModal }) => {
   const { currentUser } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -19,7 +22,7 @@ const Appointments = ({ openBookingModal }) => {
           const doctorRef = doc(db, 'users', appointment.doctorId);
           const doctorSnap = await getDoc(doctorRef);
           if (doctorSnap.exists()) {
-            appointment.doctorName = doctorSnap.data().fullName || doctorSnap.data().email;
+            appointment.doctorName = doctorSnap.data().fullName || 'Unknown Doctor';
           } else {
             appointment.doctorName = 'Unknown Doctor';
           }
@@ -32,16 +35,23 @@ const Appointments = ({ openBookingModal }) => {
     }
   }, [currentUser]);
 
-  const handleDelete = async (appointmentId) => {
+  const confirmDelete = (appointmentId) => {
+    setAppointmentToDelete(appointmentId);
+    setShowConfirmModal(true);
+  };
+
+  const handleDelete = async () => {
     try {
-      const confirmed = window.confirm("Are you sure you want to cancel this appointment?");
-      if (confirmed) {
-        await deleteDoc(doc(db, "appointments", appointmentId));
+      if (appointmentToDelete) {
+        await deleteDoc(doc(db, "appointments", appointmentToDelete));
         alert('Appointment cancelled successfully.');
       }
     } catch (err) {
       console.error("Error removing appointment: ", err);
       alert('Failed to cancel appointment.');
+    } finally {
+      setShowConfirmModal(false);
+      setAppointmentToDelete(null);
     }
   };
 
@@ -63,7 +73,7 @@ const Appointments = ({ openBookingModal }) => {
               <p><strong>Date:</strong> {appointment.appointmentDate}</p>
               <p><strong>Time:</strong> {appointment.appointmentTime}</p>
               <button 
-                onClick={() => handleDelete(appointment.id)} 
+                onClick={() => confirmDelete(appointment.id)} 
                 className="delete-button"
               >
                 Cancel
@@ -71,6 +81,13 @@ const Appointments = ({ openBookingModal }) => {
             </div>
           ))}
         </div>
+      )}
+      {showConfirmModal && (
+        <ConfirmationModal
+          message="Are you sure you want to cancel this appointment?"
+          onConfirm={handleDelete}
+          onCancel={() => setShowConfirmModal(false)}
+        />
       )}
     </div>
   );
