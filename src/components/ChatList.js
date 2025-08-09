@@ -8,7 +8,8 @@ const ChatList = ({ onSelectChat, close }) => {
   const { currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [unreadChats, setUnreadChats] = useState({});
+  const [lastReadTimestamps, setLastReadTimestamps] = useState({});
+  const [lastMessageTimestamps, setLastMessageTimestamps] = useState({});
 
   useEffect(() => {
     if (!currentUser) return;
@@ -25,31 +26,23 @@ const ChatList = ({ onSelectChat, close }) => {
       setLoading(false);
     };
 
-    const listenForUnreadChats = () => {
+    const listenForChatActivity = () => {
       const chatsQuery = query(collection(db, 'chats'), where('users', 'array-contains', currentUser.uid));
       return onSnapshot(chatsQuery, (snapshot) => {
-        const unreadStatus = {};
-        snapshot.forEach(async (chatDoc) => {
-          const chatData = chatDoc.data();
-          const messagesQuery = query(collection(db, 'chats', chatDoc.id, 'messages'), where('senderId', '!=', currentUser.uid));
-          const messagesSnapshot = await getDocs(messagesQuery);
-
-          let hasUnread = false;
-          messagesSnapshot.forEach(msgDoc => {
-            if (!chatData.readBy || !chatData.readBy.includes(currentUser.uid)) {
-              hasUnread = true;
-            }
-          });
-          if (hasUnread) {
-             unreadStatus[chatDoc.id] = true;
-          }
+        const lastMsgTimestamps = {};
+        const readTimestamps = {};
+        snapshot.forEach(doc => {
+          const chatData = doc.data();
+          lastMsgTimestamps[doc.id] = chatData.lastMessageTimestamp;
+          readTimestamps[doc.id] = chatData.lastReadTimestamp?.[currentUser.uid];
         });
-        setUnreadChats(unreadStatus);
+        setLastMessageTimestamps(lastMsgTimestamps);
+        setLastReadTimestamps(readTimestamps);
       });
     };
 
     fetchUsers();
-    const unsubscribe = listenForUnreadChats();
+    const unsubscribe = listenForChatActivity();
     return () => unsubscribe();
   }, [currentUser]);
 
@@ -64,10 +57,12 @@ const ChatList = ({ onSelectChat, close }) => {
         createdAt: new Date()
       });
     }
-    
-    // Mark as read when the chat is opened
-    await setDoc(chatRef, { readBy: [currentUser.uid, user.uid] }, { merge: true });
-    
+
+    // Update the last read timestamp for this user in this chat
+    await updateDoc(chatRef, {
+      [`lastReadTimestamp.${currentUser.uid}`]: serverTimestamp()
+    });
+
     onSelectChat(combinedId);
   };
 
@@ -84,7 +79,9 @@ const ChatList = ({ onSelectChat, close }) => {
       <div className="chat-users-list">
         {users.map(user => {
           const combinedId = currentUser.uid > user.uid ? currentUser.uid + user.uid : user.uid + currentUser.uid;
-          const hasUnread = unreadChats[combinedId];
+          const hasUnread = lastMessageTimestamps[combinedId] &&
+                            (!lastReadTimestamps[combinedId] || lastMessageTimestamps[combinedId].toDate() > lastReadTimestamps[combinedId].toDate());
+          
           return (
             <div key={user.id} className="chat-user-item" onClick={() => handleSelectUser(user)}>
               <p className="user-name">{user.fullName || user.email}</p>
