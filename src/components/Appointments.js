@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
-import ConfirmationModal from './ConfirmationModal';
-import SuccessModal from './SuccessModal';
+import Modal from './Modal';
 import './Appointments.css';
 
 const Appointments = ({ openBookingModal }) => {
   const { currentUser } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showModal, setShowModal] = useState(null); // 'confirm', 'success', 'error'
+  const [modalMessage, setModalMessage] = useState('');
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
   useEffect(() => {
@@ -38,26 +37,28 @@ const Appointments = ({ openBookingModal }) => {
 
   const confirmDelete = (appointmentId) => {
     setAppointmentToDelete(appointmentId);
-    setShowConfirmModal(true);
+    setModalMessage("Are you sure you want to cancel this appointment?");
+    setShowModal('confirm');
   };
 
   const handleDelete = async () => {
     try {
       if (appointmentToDelete) {
         await deleteDoc(doc(db, "appointments", appointmentToDelete));
-        setShowSuccessModal(true);
+        setModalMessage("Appointment cancelled successfully.");
+        setShowModal('success');
       }
     } catch (err) {
       console.error("Error removing appointment: ", err);
-      alert('Failed to cancel appointment.');
+      setModalMessage("Failed to cancel appointment.");
+      setShowModal('error');
     } finally {
-      setShowConfirmModal(false);
       setAppointmentToDelete(null);
     }
   };
 
-  const handleSuccessModalClose = () => {
-    setShowSuccessModal(false);
+  const handleModalClose = () => {
+    setShowModal(null);
   };
 
   if (loading) {
@@ -87,17 +88,23 @@ const Appointments = ({ openBookingModal }) => {
           ))}
         </div>
       )}
-      {showConfirmModal && (
-        <ConfirmationModal
-          message="Are you sure you want to cancel this appointment?"
+      {showModal === 'confirm' && (
+        <Modal
+          message={modalMessage}
           onConfirm={handleDelete}
-          onCancel={() => setShowConfirmModal(false)}
+          onCancel={handleModalClose}
         />
       )}
-      {showSuccessModal && (
-        <SuccessModal
-          message="Appointment cancelled successfully!"
-          onClose={handleSuccessModalClose}
+      {showModal === 'success' && (
+        <Modal
+          message={modalMessage}
+          onConfirm={handleModalClose}
+        />
+      )}
+      {showModal === 'error' && (
+        <Modal
+          message={modalMessage}
+          onConfirm={handleModalClose}
         />
       )}
     </div>

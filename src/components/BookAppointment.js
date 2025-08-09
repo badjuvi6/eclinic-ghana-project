@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, query, where, addDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
-import SuccessModal from './SuccessModal';
+import Modal from './Modal';
 import './BookAppointment.css';
 
 const BookAppointment = ({ close }) => {
@@ -83,9 +83,9 @@ const BookAppointment = ({ close }) => {
         <button type="submit" className="book-button">Book</button>
       </form>
       {showSuccessModal && (
-        <SuccessModal 
+        <Modal 
           message="Appointment booked successfully!" 
-          onClose={handleModalClose}
+          onConfirm={handleModalClose}
         />
       )}
     </div>
