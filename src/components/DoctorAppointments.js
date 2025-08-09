@@ -19,7 +19,7 @@ const DoctorAppointments = () => {
           const patientRef = doc(db, 'users', appointment.patientId);
           const patientSnap = await getDoc(patientRef);
           if (patientSnap.exists()) {
-            appointment.patientName = patientSnap.data().fullName || patientSnap.data().email;
+            appointment.patientName = patientSnap.data().fullName || 'Unknown Patient';
           } else {
             appointment.patientName = 'Unknown Patient';
           }
