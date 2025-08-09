@@ -14,11 +14,16 @@
   z-index: 999;
 }
 
-.chatlist-container h3 {
-  margin-top: 0;
-  text-align: center;
+.chatlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
+}
+
+.chatlist-header h3 {
+  margin: 0;
 }
 
 .chat-users-list {
@@ -40,7 +45,7 @@
   background-color: #f7f7f7;
 }
 
-.chat-user-item .user-email {
+.chat-user-item .user-name {
   margin: 0;
   font-weight: bold;
 }
@@ -49,4 +54,11 @@
   margin: 0;
   font-size: 0.8em;
   color: #888;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
 }

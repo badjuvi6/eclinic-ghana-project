@@ -41,16 +41,16 @@
   gap: 10px;
 }
 
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
 .message {
   padding: 8px 12px;
   border-radius: 15px;
-  max-width: 80%;
-  word-wrap: break-word;
-  position: relative;
-}
-
-.message p {
-  margin: 0;
 }
 
 .message.sent {
@@ -65,16 +65,20 @@
   align-self: flex-start;
 }
 
+.message-wrapper.sent {
+  align-self: flex-end;
+}
+
+.message-wrapper.received {
+  align-self: flex-start;
+}
+
 .timestamp {
   font-size: 0.7em;
   color: #888;
-  position: absolute;
-  bottom: 5px;
-  right: 10px;
-}
-
-.message.sent .timestamp {
-  color: #cce5ff;
+  margin-top: 2px;
+  text-align: right;
+  padding-right: 5px;
 }
 
 .message-form {

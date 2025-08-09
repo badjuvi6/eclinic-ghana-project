@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../firebase';
-import { collection, addDoc, query, orderBy, serverTimestamp, onSnapshot, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import './Chat.css';
 
@@ -54,8 +54,10 @@ const Chat = ({ chatId, close }) => {
       </div>
       <div className="messages-list">
         {messages.map(msg => (
-          <div key={msg.id} className={`message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}>
-            <p>{msg.text}</p>
+          <div key={msg.id} className={`message-wrapper ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}>
+            <div className="message">
+              <p>{msg.text}</p>
+            </div>
             <span className="timestamp">{msg.createdAt?.toDate().toLocaleTimeString()}</span>
           </div>
         ))}
