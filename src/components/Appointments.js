@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import './Appointments.css';
 
@@ -12,10 +12,18 @@ const Appointments = ({ openBookingModal }) => {
   useEffect(() => {
     if (currentUser) {
       const q = query(collection(db, 'appointments'), where('patientId', '==', currentUser.uid));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const appointmentsList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
+      const unsubscribe = onSnapshot(q, async (snapshot) => {
+        const appointmentsList = await Promise.all(snapshot.docs.map(async (appointmentDoc) => {
+          const appointment = { id: appointmentDoc.id, ...appointmentDoc.data() };
+          // Fetch the doctor's full name from the 'users' collection
+          const doctorRef = doc(db, 'users', appointment.doctorId);
+          const doctorSnap = await getDoc(doctorRef);
+          if (doctorSnap.exists()) {
+            appointment.doctorName = doctorSnap.data().fullName || doctorSnap.data().email;
+          } else {
+            appointment.doctorName = 'Unknown Doctor';
+          }
+          return appointment;
         }));
         setAppointments(appointmentsList);
         setLoading(false);
@@ -38,7 +46,7 @@ const Appointments = ({ openBookingModal }) => {
         <div className="appointments-list">
           {appointments.map(appointment => (
             <div key={appointment.id} className="appointment-card">
-              <p><strong>Doctor:</strong> {appointment.doctorEmail}</p>
+              <p><strong>Doctor:</strong> {appointment.doctorName}</p>
               <p><strong>Date:</strong> {appointment.appointmentDate}</p>
               <p><strong>Time:</strong> {appointment.appointmentTime}</p>
             </div>
