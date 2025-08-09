@@ -3,7 +3,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import PatientDashboard from './components/dashboard';
 import DoctorDashboard from './components/doctordashboard';
-import HomePage from './components/HomePage'; // Import the new HomePage
+import HomePage from './components/HomePage';
 import { useAuth } from './contexts/AuthContext';
 import { auth, db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -73,10 +73,18 @@ function App() {
         )}
       </header>
       
-      {currentUser && userType === 'doctor' && <DoctorDashboard openChatList={openChatList} fullName={fullName} />}
-      {currentUser && userType === 'patient' && <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} fullName={fullName} />}
-      {!currentUser && <HomePage />} {/* This is the new homepage */}
+      {/* Conditionally render the correct component based on login status and user type */}
+      {currentUser ? (
+        userType === 'doctor' ? (
+          <DoctorDashboard openChatList={openChatList} fullName={fullName} />
+        ) : (
+          <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} fullName={fullName} />
+        )
+      ) : (
+        <HomePage />
+      )}
 
+      {/* Modals will be rendered here regardless of the main content */}
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={closeLoginModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
