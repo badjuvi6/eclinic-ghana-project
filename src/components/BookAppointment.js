@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import { collection, getDocs, query, where, addDoc, doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import Modal from './Modal';
-import DoctorProfileModal from './DoctorProfileModal'; // Import the new modal
+import DoctorProfileModal from './DoctorProfileModal';
 import './BookAppointment.css';
 
 const BookAppointment = ({ close }) => {
@@ -25,8 +25,8 @@ const BookAppointment = ({ close }) => {
         id: doc.id,
         fullName: doc.data().fullName,
         email: doc.data().email,
-        specialty: doc.data().specialty, // Fetch specialty
-        bio: doc.data().bio // Fetch bio
+        specialty: doc.data().specialty,
+        bio: doc.data().bio
       }));
       setDoctors(doctorsList);
     };
@@ -83,7 +83,7 @@ const BookAppointment = ({ close }) => {
     <div className="form-container">
       <h2>Book Appointment</h2>
       {error && <p className="error-message">{error}</p>}
-      
+
       {!selectedDoctor && (
         <div className="doctor-list">
           <h3>Available Doctors</h3>
@@ -93,7 +93,7 @@ const BookAppointment = ({ close }) => {
                 <h4>Dr. {doctor.fullName}</h4>
                 <p>{doctor.specialty || 'General Practitioner'}</p>
               </div>
-              <button 
+              <button
                 onClick={() => viewDoctorProfile(doctor)}
                 className="view-profile-button"
               >
@@ -123,8 +123,8 @@ const BookAppointment = ({ close }) => {
       )}
 
       {showSuccessModal && (
-        <Modal 
-          message="Appointment booked successfully!" 
+        <Modal
+          message="Appointment booked successfully!"
           onConfirm={handleModalClose}
         />
       )}

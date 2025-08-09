@@ -9,7 +9,7 @@ const Appointments = ({ openBookingModal }) => {
   const { currentUser } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(null); // 'confirm', 'success', 'error'
+  const [showModal, setShowModal] = useState(null);
   const [modalMessage, setModalMessage] = useState('');
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
@@ -78,8 +78,8 @@ const Appointments = ({ openBookingModal }) => {
               <p><strong>Doctor:</strong> {appointment.doctorName}</p>
               <p><strong>Date:</strong> {appointment.appointmentDate}</p>
               <p><strong>Time:</strong> {appointment.appointmentTime}</p>
-              <button 
-                onClick={() => confirmDelete(appointment.id)} 
+              <button
+                onClick={() => confirmDelete(appointment.id)}
                 className="delete-button"
               >
                 Cancel

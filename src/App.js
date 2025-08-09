@@ -72,8 +72,7 @@ function App() {
           </>
         )}
       </header>
-      
-      {/* Conditionally render the correct component based on login status and user type */}
+
       {currentUser ? (
         userType === 'doctor' ? (
           <DoctorDashboard openChatList={openChatList} fullName={fullName} />
@@ -84,7 +83,6 @@ function App() {
         <HomePage />
       )}
 
-      {/* Modals will be rendered here regardless of the main content */}
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={closeLoginModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
