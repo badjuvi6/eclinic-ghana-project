@@ -1,22 +1,14 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { auth } from '../firebase';
 import './Header.css';
 
-const Header = ({
-  fullName,
-  isLoggedIn,
-  openLoginModal,
-  openRegisterModal,
-  openChatList
-}) => {
+const Header = ({ fullName, isLoggedIn, openLoginModal, openRegisterModal, openChatList }) => {
   const { logout } = useAuth();
   
   return (
     <header className="app-header">
       <div className="header-left">
         <div className="app-logo">
-          {/* You can replace this with an image */}
           <img src="/logo192.png" alt="eClinic Logo" className="logo-img" />
         </div>
         <a href="#about-us" className="nav-link">About Us</a>
