@@ -21,12 +21,14 @@ const HomePage = () => {
 
   return (
     <div className="homepage-container">
+      {/* Hero Section */}
       <section className="hero-section">
         <h1>Your Health, Our Priority.</h1>
         <p>Connect with expert doctors from the comfort of your home. Secure, simple, and effective.</p>
         <button className="cta-button">Book an Appointment</button>
       </section>
 
+      {/* Features Section */}
       <section className="features-section">
         <h2>Key Features</h2>
         <div className="features-list">
@@ -45,6 +47,7 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Providers Section */}
       <section className="providers-section">
         <h2>Our Providers</h2>
         <p>Meet our team of experienced and dedicated doctors.</p>
@@ -62,7 +65,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="about-us-section">
+      {/* About Us Section */}
+      <section id="about-us" className="about-us-section">
         <h2>About Us</h2>
         <p>eClinic is dedicated to providing accessible and high-quality healthcare to everyone. Our mission is to bridge the gap between patients and medical professionals through a secure and user-friendly digital platform.</p>
       </section>
