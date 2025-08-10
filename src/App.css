@@ -2,9 +2,10 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-top: 65px; /* Added this to prevent content from hiding behind the header */
 }
 
-.main-content {
+.dashboard-wrapper {
   flex-grow: 1;
 }
 

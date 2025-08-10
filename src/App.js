@@ -11,7 +11,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
 import ChatList from './components/ChatList';
-import Modal from './components/Modal'; // Assuming you have a Modal component
+import Modal from './components/Modal';
 import './App.css';
 
 function App() {
@@ -88,7 +88,7 @@ function App() {
         openLogoutConfirm={openLogoutConfirm}
       />
 
-      <main className="main-content">
+      <div className="dashboard-wrapper">
         {currentUser ? (
           userType === 'doctor' ? (
             <DoctorDashboard openChatList={openChatList} fullName={fullName} />
@@ -98,8 +98,8 @@ function App() {
         ) : (
           <HomePage />
         )}
-      </main>
-      
+      </div>
+
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={closeLoginModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
