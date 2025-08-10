@@ -2,11 +2,11 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 65px; /* Added this to prevent content from hiding behind the header */
 }
 
-.dashboard-wrapper {
+.main-content {
   flex-grow: 1;
+  padding-top: 65px; /* Adjust this value if your header height changes */
 }
 
 .modal-overlay {

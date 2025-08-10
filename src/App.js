@@ -69,12 +69,8 @@ function App() {
   const closeLogoutConfirm = () => setIsLogoutConfirmOpen(false);
 
   const handleLogout = async () => {
-    try {
       await logout();
       closeLogoutConfirm();
-    } catch (error) {
-      console.error("Failed to log out:", error);
-    }
   };
 
   return (
@@ -88,7 +84,7 @@ function App() {
         openLogoutConfirm={openLogoutConfirm}
       />
 
-      <div className="dashboard-wrapper">
+      <main className="main-content">
         {currentUser ? (
           userType === 'doctor' ? (
             <DoctorDashboard openChatList={openChatList} fullName={fullName} />
@@ -98,8 +94,8 @@ function App() {
         ) : (
           <HomePage />
         )}
-      </div>
-
+      </main>
+      
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={closeLoginModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
