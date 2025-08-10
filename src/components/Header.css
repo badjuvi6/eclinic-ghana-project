@@ -25,20 +25,21 @@
   gap: 15px;
 }
 
-.app-logo {
+.app-logo-text {
   font-size: 1.5rem;
   font-weight: bold;
   color: #007bff;
-}
-
-.logo-img {
-  height: 40px;
 }
 
 .nav-link {
   text-decoration: none;
   color: #555;
   font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #007bff;
 }
 
 .nav-button {
@@ -48,6 +49,11 @@
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #0056b3;
 }
 
 .greeting {

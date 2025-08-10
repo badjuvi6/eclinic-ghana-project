@@ -9,17 +9,14 @@ const Header = ({
   openRegisterModal,
   openChatList
 }) => {
-  const { logout } = useAuth(); // The logout function is now correctly accessed here
-  
+  const { logout } = useAuth();
+
   return (
     <header className="app-header">
       <div className="header-left">
-        <div className="app-logo">
-          {/* You can replace this with an image */}
-          <img src="/logo192.png" alt="eClinic Logo" className="logo-img" />
-        </div>
-        <a href="#about-us" className="nav-link">About Us</a>
-        <a href="mailto:info@eclinicghana.com" className="nav-link">Contact</a>
+        <div className="app-logo-text">eClinic</div>
+        <a href="#about-us" className="nav-link">☎️</a>
+        <a href="mailto:info@eclinicghana.com" className="nav-link">✉️</a>
       </div>
       <div className="header-right">
         {isLoggedIn ? (
