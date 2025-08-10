@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import './Header.css';
 
 const Header = ({
@@ -7,23 +6,22 @@ const Header = ({
   isLoggedIn,
   openLoginModal,
   openRegisterModal,
-  openChatList
+  openChatList,
+  openLogoutConfirm
 }) => {
-  const { logout } = useAuth();
-
   return (
     <header className="app-header">
       <div className="header-left">
         <div className="app-logo-text">eClinic</div>
-        <a href="#about-us" className="nav-link">☎️</a>
-        <a href="mailto:info@eclinicghana.com" className="nav-link">✉️</a>
+        <a href="#about-us" className="nav-link">☎️ About Us</a>
+        <a href="mailto:info@eclinicghana.com" className="nav-link">✉️ Contact</a>
       </div>
       <div className="header-right">
         {isLoggedIn ? (
           <>
             <span className="greeting">Welcome, {fullName}!</span>
             <button onClick={openChatList} className="nav-button">Open Chats</button>
-            <button onClick={logout} className="nav-button">Logout</button>
+            <button onClick={openLogoutConfirm} className="nav-button">Logout</button>
           </>
         ) : (
           <>

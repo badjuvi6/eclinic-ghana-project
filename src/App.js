@@ -11,6 +11,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
 import ChatList from './components/ChatList';
+import Modal from './components/Modal'; // Assuming you have a Modal component
 import './App.css';
 
 function App() {
@@ -21,7 +22,8 @@ function App() {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [userType, setUserType] = useState(null);
   const [fullName, setFullName] = useState(null);
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserTypeAndName = async () => {
@@ -63,6 +65,18 @@ function App() {
     setSelectedChatId(chatId);
   };
 
+  const openLogoutConfirm = () => setIsLogoutConfirmOpen(true);
+  const closeLogoutConfirm = () => setIsLogoutConfirmOpen(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      closeLogoutConfirm();
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
+  };
+
   return (
     <div className="app-container">
       <Header
@@ -71,6 +85,7 @@ function App() {
         openLoginModal={openLoginModal}
         openRegisterModal={openRegisterModal}
         openChatList={openChatList}
+        openLogoutConfirm={openLogoutConfirm}
       />
 
       <main className="main-content">
@@ -115,6 +130,19 @@ function App() {
 
       {selectedChatId && (
         <Chat chatId={selectedChatId} close={() => { setSelectedChatId(null); setIsChatListOpen(false); }} />
+      )}
+
+      {isLogoutConfirmOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to log out?</p>
+            <div className="modal-actions">
+              <button onClick={handleLogout} className="confirm-button">Yes, Logout</button>
+              <button onClick={closeLogoutConfirm} className="cancel-button">Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

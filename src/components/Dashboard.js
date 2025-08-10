@@ -3,13 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import Appointments from './Appointments';
 import './Dashboard.css';
 
-const PatientDashboard = ({ openBookingModal, fullName }) => {
-  const { logout } = useAuth();
-  // ... rest of the weather API logic from before
+const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
 
-  const API_KEY = "d882cb4248b531ffebe62c1b8e79a8c3";
+  const API_KEY = "YOUR_API_KEY_HERE";
   const city = "Accra";
   const country = "GH";
 
@@ -25,13 +23,16 @@ const PatientDashboard = ({ openBookingModal, fullName }) => {
         setLoadingWeather(false);
       }
     };
-
     fetchWeather();
-  }, [API_KEY, city, country]);
+  }, []);
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
+        <div className="dashboard-header">
+          <h2>Welcome, {fullName}!</h2>
+          <button onClick={openChatList} className="chat-button">Open Chats</button>
+        </div>
         <div className="weather-widget">
           {loadingWeather ? (
             <p>Loading weather data...</p>
