@@ -1,71 +1,12 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
 .app-container {
   min-height: 100vh;
-  background-image: url('./assets/pexels-cottonbro-7578803.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   display: flex;
   flex-direction: column;
 }
 
-.app-header {
-  display: flex;
-  justify-content: flex-end;
-  padding: 20px;
-}
-
-.app-main-content {
+.main-content {
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  padding: 20px;
-}
-
-.app-main-content h1 {
-  font-size: 3rem;
-  margin-bottom: 0;
-}
-
-.app-main-content p {
-  font-size: 1.2rem;
-}
-
-.login-button, .register-button, .logout-button, .chat-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin-left: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.logout-button {
-  background-color: #dc3545;
-}
-
-.chat-button {
-  background-color: #28a745;
+  padding-top: 65px; /* Adjust this value if your header height changes */
 }
 
 .modal-overlay {
@@ -74,43 +15,26 @@ code {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 10000;
 }
 
 .modal-content {
   background-color: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   width: 90%;
   max-width: 500px;
-}
-
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.user-info {
   text-align: center;
-  color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-.user-info button {
+.error-message {
+  color: #dc3545;
   margin-top: 10px;
-}
-
-.content {
-  width: 100%;
-  max-width: 800px;
-  margin-top: 20px;
 }

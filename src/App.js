@@ -73,16 +73,18 @@ function App() {
         openChatList={openChatList}
       />
 
-      {currentUser ? (
-        userType === 'doctor' ? (
-          <DoctorDashboard openChatList={openChatList} fullName={fullName} />
+      <main className="main-content">
+        {currentUser ? (
+          userType === 'doctor' ? (
+            <DoctorDashboard openChatList={openChatList} fullName={fullName} />
+          ) : (
+            <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} fullName={fullName} />
+          )
         ) : (
-          <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} fullName={fullName} />
-        )
-      ) : (
-        <HomePage />
-      )}
-
+          <HomePage />
+        )}
+      </main>
+      
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={closeLoginModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
