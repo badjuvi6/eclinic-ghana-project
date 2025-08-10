@@ -4,8 +4,9 @@ import Register from './components/Register';
 import PatientDashboard from './components/dashboard';
 import DoctorDashboard from './components/doctordashboard';
 import HomePage from './components/HomePage';
+import Header from './components/Header';
 import { useAuth } from './contexts/AuthContext';
-import { auth, db } from './firebase';
+import { db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
@@ -64,14 +65,13 @@ function App() {
 
   return (
     <div className="app-container">
-      <header className="app-header">
-        {!currentUser && (
-          <>
-            <button onClick={openLoginModal} className="login-button">Login</button>
-            <button onClick={openRegisterModal} className="register-button">Register</button>
-          </>
-        )}
-      </header>
+      <Header
+        fullName={fullName}
+        isLoggedIn={!!currentUser}
+        openLoginModal={openLoginModal}
+        openRegisterModal={openRegisterModal}
+        openChatList={openChatList}
+      />
 
       {currentUser ? (
         userType === 'doctor' ? (
