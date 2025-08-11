@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import './Doctordashboard.css';
 import Chat from './Chat';
-import DoctorAvailability from './DoctorAvailability'; // Import the new component
+import DoctorAvailability from './DoctorAvailability';
+import DoctorProfile from './DoctorProfile'; // Import the new component
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 
@@ -40,7 +41,8 @@ const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
         <div className="dashboard-header">
           <h2>Welcome, Dr. {fullName}!</h2>
         </div>
-        <DoctorAvailability /> {/* Render the new component here */}
+        <DoctorProfile /> {/* Add the new profile component here */}
+        <DoctorAvailability /> 
         <div className="appointments-list-container">
           <h3>Your Upcoming Appointments</h3>
           {loadingAppointments ? (

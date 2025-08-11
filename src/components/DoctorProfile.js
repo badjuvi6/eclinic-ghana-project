@@ -4,10 +4,10 @@ import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import './DoctorProfile.css';
 
-const DoctorProfile = ({ onClose }) => {
+const DoctorProfile = () => {
   const { currentUser } = useAuth();
-  const [specialty, setSpecialty] = useState('');
   const [bio, setBio] = useState('');
+  const [specialty, setSpecialty] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
@@ -18,8 +18,8 @@ const DoctorProfile = ({ onClose }) => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setSpecialty(data.specialty || '');
           setBio(data.bio || '');
+          setSpecialty(data.specialty || '');
         }
       }
       setLoading(false);
@@ -29,19 +29,21 @@ const DoctorProfile = ({ onClose }) => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setMessage('');
-    if (currentUser) {
+    if (!currentUser) {
+      setMessage('You must be logged in to update your profile.');
+      return;
+    }
+
+    try {
       const docRef = doc(db, 'users', currentUser.uid);
-      try {
-        await updateDoc(docRef, {
-          specialty: specialty,
-          bio: bio,
-        });
-        setMessage('Profile updated successfully!');
-      } catch (error) {
-        setMessage('Failed to update profile.');
-        console.error("Error updating document: ", error);
-      }
+      await updateDoc(docRef, {
+        bio: bio,
+        specialty: specialty,
+      });
+      setMessage('Profile updated successfully!');
+    } catch (error) {
+      console.error("Error updating profile: ", error);
+      setMessage('Failed to update profile.');
     }
   };
 
@@ -52,31 +54,27 @@ const DoctorProfile = ({ onClose }) => {
   return (
     <div className="profile-container">
       <h3>Edit Your Profile</h3>
-      <form onSubmit={handleUpdateProfile}>
-        <div className="form-group">
-          <label>Specialty</label>
+      <form onSubmit={handleUpdateProfile} className="profile-form">
+        <label>
+          Specialty:
           <input
             type="text"
             value={specialty}
             onChange={(e) => setSpecialty(e.target.value)}
-            placeholder="e.g., Cardiologist"
-            required
+            placeholder="e.g., General Practitioner, Cardiologist"
           />
-        </div>
-        <div className="form-group">
-          <label>Bio</label>
+        </label>
+        <label>
+          Bio:
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Tell us about your experience and expertise."
-            rows="4"
-            required
+            placeholder="Write a brief bio about yourself..."
           ></textarea>
-        </div>
-        <button type="submit" className="save-button">Save Changes</button>
-        <button type="button" onClick={onClose} className="close-button">Close</button>
+        </label>
+        <button type="submit" className="save-profile-button">Save Profile</button>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && <p className="profile-message">{message}</p>}
     </div>
   );
 };
