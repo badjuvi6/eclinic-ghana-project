@@ -41,30 +41,34 @@ const ChatList = ({ onSelectChat, close }) => {
 
   if (loading) {
     return (
-      <div className="chat-list-container">
-        <p>Loading chats...</p>
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <p>Loading chats...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="chat-list-container">
-      <div className="chat-list-header">
-        <h3>Your Chats</h3>
-        <button onClick={close} className="close-button">&times;</button>
+    <div className="modal-overlay">
+      <div className="modal-content chat-list-content">
+        <div className="chat-list-header">
+          <h3>Your Chats</h3>
+          <button onClick={close} className="close-button">&times;</button>
+        </div>
+        {chats.length === 0 ? (
+          <p>You have no chats yet.</p>
+        ) : (
+          <ul className="chat-list">
+            {chats.map(chat => (
+              <li key={chat.id} onClick={() => onSelectChat(chat.id)} className="chat-item">
+                <span>{chat.otherUserName}</span>
+                {chat.isUnread && <span className="unread-dot"></span>}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-      {chats.length === 0 ? (
-        <p>You have no chats yet.</p>
-      ) : (
-        <ul className="chat-list">
-          {chats.map(chat => (
-            <li key={chat.id} onClick={() => onSelectChat(chat.id)} className="chat-item">
-              <span>{chat.otherUserName}</span>
-              {chat.isUnread && <span className="unread-dot"></span>}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };

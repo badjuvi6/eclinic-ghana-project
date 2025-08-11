@@ -5,7 +5,7 @@ import Chat from './Chat';
 import DoctorCalendar from './DoctorCalendar'; 
 import DoctorProfile from './DoctorProfile';
 import { db } from '../firebase';
-import { collection, query, where, onSnapshot, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc, updateDoc, addDoc } from 'firebase/firestore';
 
 const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
   const { currentUser } = useAuth();
@@ -45,6 +45,17 @@ const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
     try {
       const appointmentRef = doc(db, 'appointments', appointmentId);
       await updateDoc(appointmentRef, { status });
+
+      // FIX: Create a chat document when the appointment is accepted
+      if (status === 'Accepted') {
+        const appointmentSnap = await getDoc(appointmentRef);
+        const { patientId, doctorId } = appointmentSnap.data();
+
+        await addDoc(collection(db, 'chats'), {
+          participants: [patientId, doctorId],
+          createdAt: new Date(),
+        });
+      }
     } catch (error) {
       console.error(`Error updating appointment status to ${status}: `, error);
     }
@@ -57,7 +68,7 @@ const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
           <h2>Welcome, Dr. {fullName}!</h2>
         </div>
         <DoctorProfile />
-        <DoctorCalendar /> {/* Render the new calendar component here */}
+        <DoctorCalendar />
         
         <div className="appointments-list-container">
           <h3>Pending Appointment Requests</h3>
