@@ -36,3 +36,15 @@
   cursor: pointer;
   margin-top: 10px;
 }
+
+.status-pending {
+  border-left: 5px solid orange;
+}
+
+.status-accepted {
+  border-left: 5px solid green;
+}
+
+.status-declined, .status-cancelled-by-patient {
+  border-left: 5px solid red;
+}

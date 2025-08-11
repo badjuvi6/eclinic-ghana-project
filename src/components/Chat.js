@@ -1,29 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { db } from '../firebase';
-import { collection, addDoc, doc, updateDoc, query, orderBy, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
+import { db } from '../firebase';
+import { collection, doc, query, orderBy, onSnapshot, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import './Chat.css';
 
 const Chat = ({ chatId, close }) => {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef(null);
-  const chatRef = doc(db, 'chats', chatId);
+  const chatRef = useRef(null);
+
+  // Mark all messages as read when the chat opens
+  useEffect(() => {
+    if (chatId && currentUser) {
+      const chatDocRef = doc(db, 'chats', chatId);
+      const lastReadBy = { [currentUser.uid]: true };
+      updateDoc(chatDocRef, { lastReadBy }).catch(err => console.error("Error updating last read status:", err));
+    }
+  }, [chatId, currentUser]);
 
   useEffect(() => {
     if (!chatId) return;
 
-    const messagesQuery = query(
-      collection(db, 'chats', chatId, 'messages'),
-      orderBy('createdAt')
-    );
-    
-    const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
-      const messagesList = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+    const messagesRef = collection(db, 'chats', chatId, 'messages');
+    const q = query(messagesRef, orderBy('timestamp'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const messagesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setMessages(messagesList);
     });
 
@@ -31,29 +33,40 @@ const Chat = ({ chatId, close }) => {
   }, [chatId]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
 
+    const messagesRef = collection(db, 'chats', chatId, 'messages');
+    const chatDocRef = doc(db, 'chats', chatId);
+
     try {
-      // 1. Add the new message to the messages subcollection
-      await addDoc(collection(db, 'chats', chatId, 'messages'), {
+      await addDoc(messagesRef, {
         text: newMessage,
         senderId: currentUser.uid,
-        createdAt: serverTimestamp(),
+        timestamp: serverTimestamp(),
       });
       
-      // 2. Update the parent chat document with the last message info
-      await updateDoc(chatRef, {
-        lastMessageTimestamp: serverTimestamp(),
+      // Update the chat document with the last message and reset read status
+      await updateDoc(chatDocRef, {
+        lastMessage: {
+          text: newMessage,
+          senderId: currentUser.uid,
+          timestamp: serverTimestamp(),
+        },
+        lastReadBy: {
+          [currentUser.uid]: true // Mark as read for the sender
+        }
       });
 
       setNewMessage('');
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error sending message: ", error);
     }
   };
 
@@ -61,18 +74,14 @@ const Chat = ({ chatId, close }) => {
     <div className="chat-container">
       <div className="chat-header">
         <h3>Chat</h3>
-        <button onClick={close} className="close-button">X</button>
+        <button onClick={close} className="close-button">&times;</button>
       </div>
-      <div className="messages-list">
+      <div ref={chatRef} className="messages-list">
         {messages.map(msg => (
-          <div key={msg.id} className={`message-wrapper ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}>
-            <div className="message">
-              <p>{msg.text}</p>
-            </div>
-            <span className="timestamp">{msg.createdAt?.toDate().toLocaleTimeString()}</span>
+          <div key={msg.id} className={`message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}>
+            <div className="message-bubble">{msg.text}</div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSendMessage} className="message-form">
         <input
@@ -80,9 +89,8 @@ const Chat = ({ chatId, close }) => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
-          className="message-input"
         />
-        <button type="submit" className="send-button">Send</button>
+        <button type="submit">Send</button>
       </form>
     </div>
   );

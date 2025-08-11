@@ -6,7 +6,8 @@ const Header = ({
   isLoggedIn,
   openLoginModal,
   openRegisterModal,
-  openChatList
+  openChatList,
+  unreadChatCount
 }) => {
   return (
     <header className="app-header">
@@ -18,7 +19,10 @@ const Header = ({
         <a href="mailto:info@eclinicghana.com" className="nav-link">✉️ Contact</a>
         {isLoggedIn ? (
           <>
-            <button onClick={openChatList} className="nav-button">Open Chats</button>
+            <div className="chat-button-container">
+              <button onClick={openChatList} className="nav-button">Open Chats</button>
+              {unreadChatCount > 0 && <span className="unread-badge">{unreadChatCount}</span>}
+            </div>
           </>
         ) : (
           <>

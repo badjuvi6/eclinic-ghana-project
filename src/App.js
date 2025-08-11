@@ -7,7 +7,7 @@ import HomePage from './components/HomePage';
 import Header from './components/Header';
 import { useAuth } from './contexts/AuthContext';
 import { db } from './firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/firestore';
 import BookAppointment from './components/BookAppointment';
 import Chat from './components/Chat';
 import ChatList from './components/ChatList';
@@ -25,6 +25,7 @@ function App() {
   const { currentUser, logout } = useAuth();
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
 
   useEffect(() => {
     const fetchUserTypeAndName = async () => {
@@ -47,6 +48,26 @@ function App() {
     };
     fetchUserTypeAndName();
   }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    
+    // Listen for unread messages
+    const q = query(collection(db, 'chats'), where('participants', 'array-contains', currentUser.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let unreadCount = 0;
+      snapshot.docs.forEach(doc => {
+        const chatData = doc.data();
+        if (chatData.lastMessage && chatData.lastMessage.senderId !== currentUser.uid && !chatData.lastReadBy?.[currentUser.uid]) {
+          unreadCount++;
+        }
+      });
+      setUnreadChatCount(unreadCount);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
 
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
@@ -91,6 +112,7 @@ function App() {
         openLoginModal={openLoginModal}
         openRegisterModal={openRegisterModal}
         openChatList={openChatList}
+        unreadChatCount={unreadChatCount}
       />
 
       <main className="main-content">

@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import './Doctordashboard.css';
 import Chat from './Chat';
-import DoctorAvailability from './DoctorAvailability';
-import DoctorProfile from './DoctorProfile'; // Import the new component
+import DoctorCalendar from './DoctorCalendar'; 
+import DoctorProfile from './DoctorProfile';
 import { db } from '../firebase';
-import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
   const { currentUser } = useAuth();
   const [appointments, setAppointments] = useState([]);
+  const [pendingAppointments, setPendingAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
   const [selectedChatId, setSelectedChatId] = useState(null);
 
@@ -17,7 +18,7 @@ const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
     if (currentUser) {
       const q = query(collection(db, 'appointments'), where('doctorId', '==', currentUser.uid));
       const unsubscribe = onSnapshot(q, async (snapshot) => {
-        const appointmentsList = await Promise.all(snapshot.docs.map(async (appointmentDoc) => {
+        const allAppointmentsList = await Promise.all(snapshot.docs.map(async (appointmentDoc) => {
           const appointment = { id: appointmentDoc.id, ...appointmentDoc.data() };
           const patientRef = doc(db, 'users', appointment.patientId);
           const patientSnap = await getDoc(patientRef);
@@ -28,12 +29,26 @@ const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
           }
           return appointment;
         }));
-        setAppointments(appointmentsList);
+        
+        const pending = allAppointmentsList.filter(app => app.status === 'Pending');
+        const upcoming = allAppointmentsList.filter(app => app.status === 'Accepted');
+
+        setPendingAppointments(pending);
+        setAppointments(upcoming);
         setLoadingAppointments(false);
       });
       return () => unsubscribe();
     }
   }, [currentUser]);
+
+  const handleAppointmentAction = async (appointmentId, status) => {
+    try {
+      const appointmentRef = doc(db, 'appointments', appointmentId);
+      await updateDoc(appointmentRef, { status });
+    } catch (error) {
+      console.error(`Error updating appointment status to ${status}: `, error);
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -41,12 +56,46 @@ const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
         <div className="dashboard-header">
           <h2>Welcome, Dr. {fullName}!</h2>
         </div>
-        <DoctorProfile /> {/* Add the new profile component here */}
-        <DoctorAvailability /> 
+        <DoctorProfile />
+        <DoctorCalendar /> {/* Render the new calendar component here */}
+        
+        <div className="appointments-list-container">
+          <h3>Pending Appointment Requests</h3>
+          {loadingAppointments ? (
+            <p>Loading pending appointments...</p>
+          ) : pendingAppointments.length === 0 ? (
+            <p>You have no pending appointment requests.</p>
+          ) : (
+            <div className="appointments-list">
+              {pendingAppointments.map(appointment => (
+                <div key={appointment.id} className="appointment-card">
+                  <p><strong>Patient:</strong> {appointment.patientName}</p>
+                  <p><strong>Date:</strong> {appointment.appointmentDate}</p>
+                  <p><strong>Time:</strong> {appointment.appointmentTime}</p>
+                  <div className="appointment-actions">
+                    <button 
+                      className="accept-button" 
+                      onClick={() => handleAppointmentAction(appointment.id, 'Accepted')}
+                    >
+                      Accept
+                    </button>
+                    <button 
+                      className="decline-button" 
+                      onClick={() => handleAppointmentAction(appointment.id, 'Declined')}
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="appointments-list-container">
           <h3>Your Upcoming Appointments</h3>
           {loadingAppointments ? (
-            <p>Loading appointments...</p>
+            <p>Loading upcoming appointments...</p>
           ) : appointments.length === 0 ? (
             <p>You have no upcoming appointments.</p>
           ) : (

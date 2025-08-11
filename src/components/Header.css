@@ -1,62 +1,70 @@
 .app-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
 }
 
 .app-logo-text {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #007bff;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .nav-link {
+  color: white;
   text-decoration: none;
-  color: #555;
   font-size: 1rem;
-  transition: color 0.3s ease;
+  transition: color 0.3s;
 }
 
 .nav-link:hover {
-  color: #007bff;
+  color: #3498db;
 }
 
 .nav-button {
-  background-color: #007bff;
+  background-color: #3498db;
   color: white;
   border: none;
-  padding: 8px 15px;
+  padding: 0.5rem 1rem;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  transition: background-color 0.3s;
 }
 
 .nav-button:hover {
-  background-color: #0056b3;
+  background-color: #2980b9;
 }
 
-.greeting {
+/* New styles for the chat notification badge */
+.chat-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.unread-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
   font-weight: bold;
-  color: #333;
+  pointer-events: none;
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, onSnapshot, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import Modal from './Modal';
 import './Appointments.css';
@@ -11,7 +11,7 @@ const Appointments = ({ openBookingModal }) => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(null);
   const [modalMessage, setModalMessage] = useState('');
-  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
+  const [appointmentToHandle, setAppointmentToHandle] = useState(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -35,16 +35,18 @@ const Appointments = ({ openBookingModal }) => {
     }
   }, [currentUser]);
 
-  const confirmDelete = (appointmentId) => {
-    setAppointmentToDelete(appointmentId);
+  const confirmCancel = (appointmentId) => {
+    setAppointmentToHandle(appointmentId);
     setModalMessage("Are you sure you want to cancel this appointment?");
-    setShowModal('confirm');
+    setShowModal('confirmCancel');
   };
 
-  const handleDelete = async () => {
+  const handleCancel = async () => {
     try {
-      if (appointmentToDelete) {
-        await deleteDoc(doc(db, "appointments", appointmentToDelete));
+      if (appointmentToHandle) {
+        await updateDoc(doc(db, "appointments", appointmentToHandle), {
+          status: 'Cancelled by Patient'
+        });
         setModalMessage("Appointment cancelled successfully.");
         setShowModal('success');
       }
@@ -53,7 +55,7 @@ const Appointments = ({ openBookingModal }) => {
       setModalMessage("Failed to cancel appointment.");
       setShowModal('error');
     } finally {
-      setAppointmentToDelete(null);
+      setAppointmentToHandle(null);
     }
   };
 
@@ -74,24 +76,27 @@ const Appointments = ({ openBookingModal }) => {
       ) : (
         <div className="appointments-list">
           {appointments.map(appointment => (
-            <div key={appointment.id} className="appointment-card">
+            <div key={appointment.id} className={`appointment-card status-${appointment.status.toLowerCase().replace(/ /g, '-')}`}>
               <p><strong>Doctor:</strong> {appointment.doctorName}</p>
               <p><strong>Date:</strong> {appointment.appointmentDate}</p>
               <p><strong>Time:</strong> {appointment.appointmentTime}</p>
-              <button
-                onClick={() => confirmDelete(appointment.id)}
-                className="delete-button"
-              >
-                Cancel
-              </button>
+              <p><strong>Status:</strong> {appointment.status || 'Pending'}</p>
+              {appointment.status !== 'Declined' && appointment.status !== 'Cancelled by Patient' && (
+                <button
+                  onClick={() => confirmCancel(appointment.id)}
+                  className="delete-button"
+                >
+                  Cancel
+                </button>
+              )}
             </div>
           ))}
         </div>
       )}
-      {showModal === 'confirm' && (
+      {showModal === 'confirmCancel' && (
         <Modal
           message={modalMessage}
-          onConfirm={handleDelete}
+          onConfirm={handleCancel}
           onCancel={handleModalClose}
         />
       )}
