@@ -7,7 +7,7 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
 
-  const API_KEY = "YOUR_API_KEY_HERE";
+  const API_KEY = "d882cb4248b531ffebe62c1b8e79a8c3"; 
   const city = "Accra";
   const country = "GH";
 
@@ -15,8 +15,15 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
     const fetchWeather = async () => {
       try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}&units=metric`);
-        const data = await response.json();
-        setWeatherData(data);
+        
+        // This check is the fix: it ensures the response is OK before continuing
+        if (response.ok) {
+          const data = await response.json();
+          setWeatherData(data);
+        } else {
+          console.error("Failed to fetch weather data: API key is likely invalid.");
+        }
+        
         setLoadingWeather(false);
       } catch (error) {
         console.error("Failed to fetch weather data:", error);
@@ -24,7 +31,7 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
       }
     };
     fetchWeather();
-  }, []);
+  }, [API_KEY]);
 
   return (
     <div className="dashboard-container">
@@ -43,7 +50,7 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
               <p>Temperature: {Math.round(weatherData.main.temp)}°C</p>
             </div>
           ) : (
-            <p>Failed to load weather data.</p>
+            <p>Failed to load weather data. Please check your API key.</p>
           )}
         </div>
         <Appointments openBookingModal={openBookingModal} />
