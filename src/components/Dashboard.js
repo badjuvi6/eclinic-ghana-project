@@ -38,7 +38,6 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
       <div className="dashboard-content">
         <div className="dashboard-header">
           <h2>Welcome, {fullName}!</h2>
-          <button onClick={openChatList} className="chat-button">Open Chats</button>
         </div>
         <div className="weather-widget">
           {loadingWeather ? (

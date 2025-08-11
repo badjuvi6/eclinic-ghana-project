@@ -8,7 +8,7 @@
 }
 
 .dashboard-content {
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay for readability */
+  background-color: rgba(0, 0, 0, 0.5); 
   padding: 20px;
   border-radius: 10px;
 }
@@ -27,4 +27,18 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.logout-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

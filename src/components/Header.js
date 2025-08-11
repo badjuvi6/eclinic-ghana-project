@@ -12,11 +12,6 @@ const Header = ({
     <header className="app-header">
       <div className="header-left">
         <div className="app-logo-text">eClinic</div>
-        {isLoggedIn ? (
-          <>
-            <span className="greeting">Welcome, {fullName}!</span>
-          </>
-        ) : null}
       </div>
       <div className="header-right">
         <a href="#about-us" className="nav-link">☎️ About Us</a>

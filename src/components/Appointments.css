@@ -1,16 +1,9 @@
 .appointments-container {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.appointments-container h3 {
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .book-appointment-button {
-  background-color: #007bff;
+  background-color: #28a745;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -20,26 +13,25 @@
 }
 
 .appointments-list {
-  display: grid;
-  gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .appointment-card {
-  border: 1px solid #eee;
-  padding: 15px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.appointment-card p {
-  margin: 5px 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 250px;
+  color: #333;
 }
 
 .delete-button {
   background-color: #dc3545;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
