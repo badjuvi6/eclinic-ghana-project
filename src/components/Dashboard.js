@@ -4,6 +4,7 @@ import Appointments from './Appointments';
 import './Dashboard.css';
 
 const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
+  const { logout } = useAuth();
   const [weatherData, setWeatherData] = useState(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
 
@@ -16,7 +17,6 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
       try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}&units=metric`);
         
-        // This check is the fix: it ensures the response is OK before continuing
         if (response.ok) {
           const data = await response.json();
           setWeatherData(data);
@@ -55,6 +55,7 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
         </div>
         <Appointments openBookingModal={openBookingModal} />
       </div>
+      <button onClick={logout} className="logout-button">Logout</button>
     </div>
   );
 };
