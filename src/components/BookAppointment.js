@@ -48,7 +48,7 @@ const BookAppointment = ({ close }) => {
         doctorId: selectedDoctor,
         appointmentDate: appointmentDate,
         appointmentTime: appointmentTime,
-        status: 'pending',
+        status: 'Pending', // Corrected status to match the doctor's dashboard
         createdAt: new Date()
       });
       setShowSuccessModal(true);
