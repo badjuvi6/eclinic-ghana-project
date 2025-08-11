@@ -24,9 +24,11 @@ function App() {
   const [fullName, setFullName] = useState(null);
   const { currentUser, logout } = useAuth();
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserTypeAndName = async () => {
+      setLoading(true);
       if (currentUser) {
         const docRef = doc(db, 'users', currentUser.uid);
         const docSnap = await getDoc(docRef);
@@ -34,13 +36,14 @@ function App() {
           setUserType(docSnap.data().userType);
           setFullName(docSnap.data().fullName);
         } else {
-          setUserType('patient');
+          setUserType('patient'); // Default to patient if not found
           setFullName(null);
         }
       } else {
         setUserType(null);
         setFullName(null);
       }
+      setLoading(false);
     };
     fetchUserTypeAndName();
   }, [currentUser]);
@@ -72,6 +75,14 @@ function App() {
       await logout();
       closeLogoutConfirm();
   };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
