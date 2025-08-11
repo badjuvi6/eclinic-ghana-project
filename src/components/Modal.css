@@ -19,11 +19,13 @@
   width: 90%;
   max-width: 400px;
   text-align: center;
+  color: #333;
 }
 
 .modal-content p {
   font-size: 1.1rem;
   margin-bottom: 20px;
+  color: #333;
 }
 
 .modal-actions {
