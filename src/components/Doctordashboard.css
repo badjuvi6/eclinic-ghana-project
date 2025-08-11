@@ -1,7 +1,7 @@
 .dashboard-container {
   padding: 20px;
   min-height: calc(100vh - 65px);
-  background-image: url('..\assets\pexels-cottonbro-7578803.jpg');
+  background-image: url('../assets/pexels-cottonbro-7578803.jpg');
   background-size: cover;
   background-position: center;
   color: white;
