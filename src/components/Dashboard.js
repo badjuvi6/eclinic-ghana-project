@@ -3,8 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Appointments from './Appointments';
 import './Dashboard.css';
 
-const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
-  const { logout } = useAuth();
+const PatientDashboard = ({ openBookingModal, fullName, openChatList, openLogoutConfirm }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
 
@@ -54,7 +53,7 @@ const PatientDashboard = ({ openBookingModal, fullName, openChatList }) => {
         </div>
         <Appointments openBookingModal={openBookingModal} />
       </div>
-      <button onClick={logout} className="logout-button">Logout</button>
+      <button onClick={openLogoutConfirm} className="logout-button">Logout</button>
     </div>
   );
 };

@@ -36,7 +36,7 @@ function App() {
           setUserType(docSnap.data().userType);
           setFullName(docSnap.data().fullName);
         } else {
-          setUserType('patient'); // Default to patient if not found
+          setUserType('patient'); 
           setFullName(null);
         }
       } else {
@@ -87,20 +87,18 @@ function App() {
   return (
     <div className="app-container">
       <Header
-        fullName={fullName}
         isLoggedIn={!!currentUser}
         openLoginModal={openLoginModal}
         openRegisterModal={openRegisterModal}
         openChatList={openChatList}
-        openLogoutConfirm={openLogoutConfirm}
       />
 
       <main className="main-content">
         {currentUser ? (
           userType === 'doctor' ? (
-            <DoctorDashboard openChatList={openChatList} fullName={fullName} />
+            <DoctorDashboard fullName={fullName} openLogoutConfirm={openLogoutConfirm} />
           ) : (
-            <PatientDashboard openBookingModal={openBookingModal} openChatList={openChatList} fullName={fullName} />
+            <PatientDashboard fullName={fullName} openBookingModal={openBookingModal} openLogoutConfirm={openLogoutConfirm} />
           )
         ) : (
           <HomePage />

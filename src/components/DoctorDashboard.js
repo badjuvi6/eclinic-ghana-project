@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import './Doctordashboard.css';
 import Chat from './Chat';
-import DoctorSchedule from './DoctorSchedule';
+import DoctorAvailability from './DoctorAvailability'; // Import the new component
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 
-const DoctorDashboard = ({ openChatList, fullName }) => {
-  const { logout, currentUser } = useAuth();
+const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
+  const { currentUser } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
   const [selectedChatId, setSelectedChatId] = useState(null);
@@ -40,7 +40,7 @@ const DoctorDashboard = ({ openChatList, fullName }) => {
         <div className="dashboard-header">
           <h2>Welcome, Dr. {fullName}!</h2>
         </div>
-        <DoctorSchedule /> 
+        <DoctorAvailability /> {/* Render the new component here */}
         <div className="appointments-list-container">
           <h3>Your Upcoming Appointments</h3>
           {loadingAppointments ? (
@@ -61,7 +61,7 @@ const DoctorDashboard = ({ openChatList, fullName }) => {
         </div>
         {selectedChatId && <Chat chatId={selectedChatId} />}
       </div>
-      <button onClick={logout} className="logout-button">Logout</button>
+      <button onClick={openLogoutConfirm} className="logout-button">Logout</button>
     </div>
   );
 };

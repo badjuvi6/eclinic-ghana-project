@@ -5,12 +5,15 @@
   background-size: cover;
   background-position: center;
   color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-content {
-  background-color: rgba(0, 0, 0, 0.5); 
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 20px;
   border-radius: 10px;
+  flex-grow: 1;
 }
 
 .dashboard-header {
@@ -30,9 +33,6 @@
 }
 
 .logout-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   background-color: #dc3545;
   color: white;
   border: none;
@@ -41,4 +41,6 @@
   font-size: 1.2rem;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+  align-self: flex-end;
 }

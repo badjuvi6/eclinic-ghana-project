@@ -1,0 +1,51 @@
+.availability-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.days-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.day-checkbox {
+  background-color: #e9ecef;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-checkbox input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.availability-message {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+}
