@@ -25,7 +25,6 @@ const HomePage = () => {
       <section className="hero-section">
         <h1>Your Health, Our Priority.</h1>
         <p>Connect with expert doctors from the comfort of your home. Secure, simple, and effective.</p>
-        <button className="cta-button">Book an Appointment</button>
       </section>
 
       {/* Features Section */}
@@ -43,24 +42,6 @@ const HomePage = () => {
           <div className="feature-card">
             <h3>Secure Health Records</h3>
             <p>Access your health information anytime, anywhere.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Providers Section */}
-      <section className="providers-section">
-        <h2>Our Providers</h2>
-        <p>Meet our team of experienced and dedicated doctors.</p>
-        <div className="providers-scroll-container">
-          <div className="providers-list">
-            {doctors.map(doctor => (
-              <div key={doctor.id} className="provider-card">
-                <img src={doctor.photoURL || 'https://via.placeholder.com/150'} alt={`Dr. ${doctor.fullName}`} className="provider-photo" />
-                <h4>Dr. {doctor.fullName}</h4>
-                <p className="provider-specialty">{doctor.specialty || 'General Practitioner'}</p>
-                <p className="provider-bio">{doctor.bio || 'No bio available.'}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
