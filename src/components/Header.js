@@ -14,10 +14,6 @@ const Header = ({
       <div className="header-left">
         <div className="app-logo-text">eClinic</div>
       </div>
-      <div className="header-right">
-        <a href="#about-us" className="nav-link">☎️ About Us</a>
-        <a href="mailto:info@eclinicghana.com" className="nav-link">✉️ Contact</a>
-        {isLoggedIn ? (
           <>
             <div className="chat-button-container">
               <button onClick={openChatList} className="nav-button">Open Chats</button>
