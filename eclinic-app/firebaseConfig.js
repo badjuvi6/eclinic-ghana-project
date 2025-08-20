@@ -2,6 +2,10 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b4dbdc5bb78271807ea975d4701863c848333b84
 const firebaseConfig = {
   apiKey: "AIzaSyCGlfDF5Mbf9PfI8AyqWXFQiWSjpT0rdNw",
   authDomain: "eclinic-ghana-project-c9747.firebaseapp.com", 
