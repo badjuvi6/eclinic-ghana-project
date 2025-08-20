@@ -14,11 +14,14 @@ const Header = ({
       <div className="header-left">
         <div className="app-logo-text">eClinic</div>
       </div>
+      <div className="header-right">
+        {isLoggedIn ? (
           <>
             <div className="chat-button-container">
               <button onClick={openChatList} className="nav-button">Open Chats</button>
               {unreadChatCount > 0 && <span className="unread-badge">{unreadChatCount}</span>}
             </div>
+
           </>
         ) : (
           <>
