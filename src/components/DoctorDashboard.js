@@ -46,7 +46,6 @@ const DoctorDashboard = ({ openLogoutConfirm, fullName }) => {
       const appointmentRef = doc(db, 'appointments', appointmentId);
       await updateDoc(appointmentRef, { status });
 
-      // FIX: Create a chat document when the appointment is accepted
       if (status === 'Accepted') {
         const appointmentSnap = await getDoc(appointmentRef);
         const { patientId, doctorId } = appointmentSnap.data();

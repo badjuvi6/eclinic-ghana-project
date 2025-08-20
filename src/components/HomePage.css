@@ -1,6 +1,6 @@
 .homepage-container {
   padding-top: 60px;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
 }
 
 /* Hero Section */
@@ -9,7 +9,7 @@
   padding: 80px 20px;
   background-color: #007bff;
   color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 2px #0056b3;
 }
 
 .hero-section h1 {
@@ -24,19 +24,25 @@
 }
 
 .cta-button {
-  background-color: #28a745;
+  background-color: #007bff;
   color: white;
-  border: none;
+  border: 1px solid white; 
   padding: 15px 30px;
   border-radius: 50px;
   font-size: 1.1rem;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #0056b3;
 }
 
 /* Features Section */
 .features-section {
   padding: 60px 20px;
   text-align: center;
+  background-color: #ffffff;
 }
 
 .features-list {
@@ -51,7 +57,7 @@
   background-color: white;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.1);
   max-width: 300px;
 }
 
@@ -59,7 +65,7 @@
 .providers-section {
   padding: 60px 0;
   text-align: center;
-  background-color: #e9ecef;
+  background-color: #f0f8ff;
 }
 
 .providers-scroll-container {
@@ -79,7 +85,7 @@
   background-color: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.1);
   text-align: left;
 }
 
@@ -89,6 +95,7 @@
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 10px;
+  border: 3px solid #007bff; 
 }
 
 .provider-specialty {
@@ -98,12 +105,12 @@
 
 .provider-bio {
   font-size: 0.9em;
-  color: #666;
+  color: #0056b3;
 }
 
 /* About Us Section */
 .about-us-section {
-  background-color: #343a40;
+  background-color: #0056b3;
   color: white;
   padding: 60px 20px;
   text-align: center;
